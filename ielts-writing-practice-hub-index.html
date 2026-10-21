@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ms. Phuong's IELTS Writing Hub - Tổng hợp bài học và bài tập luyện IELTS Writing Task 1, Task 2.">
+  <title>Ms. Phuong's IELTS Writing Hub</title>
+  <style>
+    :root {
+      --navy: #14213d;
+      --blue: #3157d5;
+      --teal: #0f9b8e;
+      --ink: #1f2937;
+      --muted: #667085;
+      --line: #e5eaf2;
+      --surface: #ffffff;
+      --bg: #f5f7fb;
+      --soft-blue: #edf2ff;
+      --soft-teal: #e8f8f5;
+      --shadow: 0 10px 30px rgba(20, 33, 61, .07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .hero {
+      background: linear-gradient(125deg, #14213d 0%, #223f86 60%, #167f83 100%);
+      color: white; padding: 42px 22px 38px;
+    }
+    .hero-inner, main, footer { max-width: 1480px; margin: 0 auto; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 800; color: #b8d6ff; }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; margin: 10px 0 12px; letter-spacing: -.04em; }
+    .hero p { max-width: 650px; margin: 0; color: #e2eaff; font-size: 1.04rem; }
+    .hero-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .pill { border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.1); padding: 6px 11px; border-radius: 999px; font-size: .82rem; }
+    main { padding: 30px 28px 48px; }
+    .toolbar { display: flex; gap: 12px; align-items: center; margin-bottom: 22px; }
+    .search-wrap { position: relative; flex: 1; }
+    .search-wrap span { position: absolute; left: 15px; top: 11px; color: var(--muted); }
+    #search {
+      width: 100%; border: 1px solid var(--line); border-radius: 13px; padding: 13px 15px 13px 42px;
+      font: inherit; background: white; outline: none;
+    }
+    #search:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(49,87,213,.12); }
+    .hint { color: var(--muted); font-size: .85rem; white-space: nowrap; }
+    .section-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: stretch; }
+    .section-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+    .section-head { padding: 19px 20px 17px; display: flex; gap: 13px; align-items: center; min-height: 106px; }
+    .section-head.task1 { background: var(--soft-blue); }
+    .section-head.task2 { background: var(--soft-teal); }
+    .section-icon { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 13px; font-size: 1.35rem; background: white; }
+    .section-head h2 { margin: 0; font-size: 1.08rem; }
+    .section-head p { margin: 4px 0 0; color: var(--muted); font-size: .84rem; }
+    .category-list { padding: 12px; display: grid; gap: 10px; }
+    .category { border: 1px solid var(--line); border-radius: 13px; padding: 13px; background: white; }
+    .category-top { display: flex; align-items: flex-start; gap: 10px; }
+    .number { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 30px; border-radius: 9px; background: #f0f3f9; color: #42516b; font-size: .8rem; font-weight: 800; }
+    .category-name { font-weight: 700; font-size: .92rem; flex: 1; }
+    .task-label { display: inline-block; border-radius: 999px; padding: 3px 7px; font-size: .67rem; font-weight: 800; letter-spacing: .03em; background: #eef2ff; color: #344cb0; margin-bottom: 7px; }
+    .task-label.task2-label { background: #e4f7f2; color: #08796f; }
+    .links { display: grid; gap: 7px; margin-top: 12px; }
+    .resource-link { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; text-decoration: none; background: #fbfcfe; transition: border-color .15s, background .15s; }
+    .resource-link:hover { border-color: #b7c6ff; background: #fafbff; }
+    .resource-title { font-size: .85rem; font-weight: 600; }
+    .resource-meta { color: var(--muted); font-size: .72rem; margin-top: 2px; }
+    .link-arrow { color: var(--blue); font-size: 1.05rem; }
+    .empty { color: var(--muted); background: #f8fafc; border: 1px dashed #d6dce7; border-radius: 9px; padding: 9px 10px; font-size: .78rem; margin-top: 12px; }
+    .no-results { display: none; text-align: center; padding: 30px; color: var(--muted); background: white; border-radius: 14px; border: 1px solid var(--line); margin-top: 18px; }
+    footer { padding: 0 20px 30px; color: var(--muted); font-size: .82rem; text-align: center; }
+    @media (max-width: 900px) { .hero-inner, main, footer { max-width: 100%; } .section-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
+    @media (max-width: 600px) {
+      .section-grid { grid-template-columns: 1fr; }
+      .toolbar { align-items: stretch; flex-direction: column; }
+      .hint { white-space: normal; }
+      .hero { padding-top: 32px; }
+      main { padding: 20px 14px 36px; }
+      .section-head { padding: 18px; }
+      .links { padding-left: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">A learning space curated by Ms. Phuong</div>
+      <h1>Ms. Phuong's<br>IELTS Writing Hub</h1>
+      <p>Learn the structure. Master each question type. Practise with purpose.</p>
+      <div class="hero-pills">
+        <span class="pill">✍️ Task 1 · Academic Report</span>
+        <span class="pill">🧠 Task 2 · Essay Writing</span>
+        <span class="pill">🎯 Practice with purpose</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="Tìm dạng bài hoặc tên bài tập..." aria-label="Tìm dạng bài hoặc tên bài tập">
+      </div>
+      <div class="hint">Tất cả 14 nhóm kiến thức được hiển thị trực tiếp bên dưới.</div>
+    </div>
+
+    <div class="section-grid" id="sections">
+      <section class="section-card" aria-labelledby="task1-heading">
+        <div class="section-head task1">
+          <div class="section-icon" aria-hidden="true">📊</div>
+          <div><h2 id="task1-heading">Writing Task 1</h2><p>Academic report · 7 knowledge areas</p></div>
+        </div>
+        <div class="category-list" id="task1-list"></div>
+      </section>
+      <section class="section-card" aria-labelledby="task2-heading">
+        <div class="section-head task2">
+          <div class="section-icon" aria-hidden="true">📝</div>
+          <div><h2 id="task2-heading">Writing Task 2</h2><p>Essay writing · 7 knowledge areas</p></div>
+        </div>
+        <div class="category-list" id="task2-list"></div>
+      </section>
+    </div>
+    <div class="no-results" id="no-results">Không tìm thấy mục phù hợp. Hãy thử từ khóa khác.</div>
+  </main>
+
+  <footer>Ms. Phuong's IELTS Writing Hub · Learn clearly. Practise consistently. Write confidently.</footer>
+
+  <script>
+    /*
+      CÁCH THÊM BÀI MỚI:
+      1. Tìm đúng chủ đề trong task1 hoặc task2.
+      2. Thêm một dòng theo mẫu:
+         { title: "Quiz 01 - Overview", url: "https://your-quiz-link.com", type: "Quiz" }
+      3. Thay URL mẫu bằng đường link bài tập thật.
+      4. Lưu file và tải lại lên GitHub.
+      Nếu chưa có link, cứ để resources: [] — trang sẽ hiển thị hướng dẫn thêm bài.
+    */
+    const task1 = [
+      { title: "Tổng quan dạng bài", resources: [] },
+      { title: "Dynamic charts", resources: [] },
+      { title: "Static charts", resources: [] },
+      { title: "Mix charts", resources: [] },
+      { title: "Process", resources: [] },
+      { title: "Maps", resources: [] },
+      { title: "Kiến thức nâng cao", resources: [] }
+    ];
+
+    const task2 = [
+      { title: "Tổng quan dạng bài", resources: [] },
+      { title: "Agree or disagree", resources: [] },
+      { title: "Discussion", resources: [] },
+      { title: "Advantages vs Disadvantages", resources: [] },
+      { title: "Cause, Problem, Solution (CPS)", resources: [] },
+      { title: "Two-part question", resources: [] },
+      { title: "Kiến thức nâng cao", resources: [] }
+    ];
+
+    function renderCategories(items, targetId, sectionKey, taskLabel) {
+      const target = document.getElementById(targetId);
+      target.innerHTML = items.map((item, index) => {
+        const resources = item.resources || [];
+        const linksHtml = resources.length
+          ? resources.map(resource => `
+              <a class="resource-link" href="${escapeAttribute(resource.url)}" target="_blank" rel="noopener noreferrer">
+                <div><div class="resource-title">${escapeHtml(resource.title)}</div>
+                <div class="resource-meta">${escapeHtml(resource.type || "Bài tập")}</div></div>
+                <span class="link-arrow" aria-hidden="true">↗</span>
+              </a>`).join("")
+          : `<div class="empty">Bài tập sẽ được cập nhật tại đây.</div>`;
+        return `
+          <article class="category" data-search="${escapeAttribute((sectionKey + " " + item.title + " " + resources.map(r => r.title).join(" ")).toLowerCase())}">
+            <div class="category-top"><span class="number">${String(index + 1).padStart(2, "0")}</span>
+              <div class="category-name"><span class="task-label ${taskLabel === "Writing Task 2" ? "task2-label" : ""}">${escapeHtml(taskLabel)}</span><br>${escapeHtml(item.title)}</div></div>
+            <div class="links">${linksHtml}</div>
+          </article>`;
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+    }
+    function escapeAttribute(value) { return escapeHtml(value); }
+
+    renderCategories(task1, "task1-list", "writing task 1", "Writing Task 1");
+    renderCategories(task2, "task2-list", "writing task 2", "Writing Task 2");
+
+    const search = document.getElementById("search");
+    const noResults = document.getElementById("no-results");
+    search.addEventListener("input", () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      document.querySelectorAll(".category").forEach(category => {
+        const matches = category.dataset.search.includes(query);
+        category.style.display = matches ? "" : "none";
+        if (matches) visible++;
+      });
+      noResults.style.display = visible ? "none" : "block";
+    });
+  </script>
+</body>
+</html>
