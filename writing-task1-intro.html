@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>CÁCH VIẾT INTRODUCTION WRITING TASK 1 (BIỂU ĐỒ SỐ LIỆU)</title>
+  <style>
+    :root {
+      --primary: #0B2A5B;
+      --primary-hover: #163d7a;
+      --bg-color: #f4f7fb;
+      --card-bg: #ffffff;
+      --text-color: #1f2937;
+      --border-color: #d1d5db;
+      --success-bg: #d1fae5;
+      --success-border: #10b981;
+      --success-text: #065f46;
+      --error-bg: #fee2e2;
+      --error-border: #ef4444;
+      --error-text: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-size: 23px;
+      line-height: 1.5;
+      padding: 50px 20px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(11, 42, 91, 0.08);
+      padding: 40px;
+    }
+
+    h1 {
+      color: var(--primary);
+      font-size: 32px;
+      text-align: center;
+      margin-bottom: 35px;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Start Screen */
+    .start-screen {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .start-screen p {
+      margin-bottom: 25px;
+      color: #4b5563;
+    }
+
+    .form-group {
+      margin-bottom: 30px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .form-group input {
+      width: 100%;
+      max-width: 500px;
+      padding: 16px 20px;
+      font-size: 23px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px 36px;
+      font-size: 23px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, opacity 0.2s;
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: var(--primary-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Quiz Screen */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 20px;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 15px;
+    }
+
+    .question-text {
+      font-size: 23px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      white-space: pre-line;
+      color: var(--primary);
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .option-card {
+      background: #f9fafb;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px;
+      font-size: 23px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .option-card:hover:not(.locked) {
+      border-color: var(--primary);
+      background-color: #f0f4fa;
+    }
+
+    .option-card.locked {
+      cursor: default;
+    }
+
+    .option-card.correct {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+      color: var(--success-text);
+    }
+
+    .option-card.incorrect {
+      background-color: var(--error-bg);
+      border-color: var(--error-border);
+      color: var(--error-text);
+    }
+
+    .option-tag {
+      font-size: 18px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(0,0,0,0.05);
+      flex-shrink: 0;
+      margin-left: 15px;
+    }
+
+    .option-card.correct .option-tag {
+      background-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .option-card.incorrect .option-tag {
+      background-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .feedback-box {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 23px;
+      display: none;
+    }
+
+    .feedback-box.correct-fb {
+      background-color: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success-text);
+      display: block;
+    }
+
+    .feedback-box.incorrect-fb {
+      background-color: var(--error-bg);
+      border: 1px solid var(--error-border);
+      color: var(--error-text);
+      display: block;
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    /* Result Screen */
+    .result-screen {
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .result-screen h2 {
+      color: var(--primary);
+      font-size: 30px;
+      margin-bottom: 20px;
+    }
+
+    .result-score {
+      font-size: 38px;
+      font-weight: bold;
+      color: var(--primary);
+      margin: 25px 0;
+      background: #f0f4fa;
+      padding: 30px 50px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .result-name {
+      font-size: 26px;
+      margin-bottom: 10px;
+      color: #4b5563;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CÁCH VIẾT INTRODUCTION WRITING TASK 1 (BIỂU ĐỒ SỐ LIỆU)</h1>
+
+    <!-- 1. Start Screen -->
+    <div id="startScreen" class="screen active">
+      <div class="start-screen">
+        <p>Vui lòng nhập họ và tên của bạn để bắt đầu bài trắc nghiệm kiến thức.</p>
+        <div class="form-group">
+          <label for="studentName">Họ và tên học viên:</label>
+          <input type="text" id="studentName" placeholder="Ví dụ: Nguyễn Văn A" autocomplete="off">
+        </div>
+        <button id="startBtn" class="btn" disabled>Bắt đầu</button>
+      </div>
+    </div>
+
+    <!-- 2. Quiz Screen -->
+    <div id="quizScreen" class="screen">
+      <div class="quiz-header">
+        <span id="questionProgress">Câu 1 / 20</span>
+        <span id="studentDisplay"></span>
+      </div>
+      <div id="questionText" class="question-text"></div>
+      <div id="optionsList" class="options-list"></div>
+      <div id="feedbackBox" class="feedback-box">
+        <div id="feedbackTitle" class="feedback-title"></div>
+        <div id="feedbackExplanation"></div>
+      </div>
+      <div class="quiz-footer">
+        <button id="nextBtn" class="btn" style="display: none;">Câu tiếp theo</button>
+      </div>
+    </div>
+
+    <!-- 3. Result Screen -->
+    <div id="resultScreen" class="screen">
+      <div class="result-screen">
+        <h2>KẾT QUẢ BÀI KIỂM TRA</h2>
+        <div class="result-name" id="resultName">Học viên: </div>
+        <div class="result-score" id="resultScore">Số câu đúng: 0 / 20</div>
+        <div>
+          <button id="restartBtn" class="btn">Làm lại</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questionsData = [
+      {
+        question: "Công thức chuẩn nhất để viết đoạn Introduction cho bài Writing Task 1 là gì?",
+        options: [
+          "A. Paraphrase lại đề bài bằng cách thay đổi từ vựng và cấu trúc câu.",
+          "B. Sao chép nguyên văn đề bài và thêm vào ý kiến nhận xét cá nhân.",
+          "C. Viết lại đề bài kết hợp đưa ra dự đoán xu hướng trong tương lai.",
+          "D. Liệt kê toàn bộ các số liệu chi tiết xuất hiện trong biểu đồ."
+        ],
+        correct: 0,
+        explanation: "Paraphrase bằng cách thay đổi từ vựng và cấu trúc câu là yêu cầu cốt lõi. B sai vì không sao chép nguyên văn và không đưa ý kiến cá nhân."
+      },
+      {
+        question: "Động từ nào sau đây KHÔNG phù hợp để thay thế cho động từ 'shows' trong câu Mở bài mô tả biểu đồ số liệu?",
+        options: [
+          "A. illustrates",
+          "B. demonstrates",
+          "C. proves",
+          "D. compares"
+        ],
+        correct: 2,
+        explanation: "'Proves' (chứng minh) mang tính khẳng định tuyệt đối/nghiên cứu khoa học, không phù hợp cho việc mô tả dữ liệu biểu đồ báo cáo."
+      },
+      {
+        question: "Khi paraphrase cụm từ chỉ thời gian 'from 2000 to 2010', cách viết nào sau đây bị coi là SAI ngữ pháp hoặc thiếu chính xác?",
+        options: [
+          "A. between 2000 and 2010",
+          "B. over a 10-year period starting from 2000",
+          "C. from a period of 2000 to 2010",
+          "D. over the period of 10 years, between 2000 and 2010"
+        ],
+        correct: 2,
+        explanation: "Cụm 'from a period of 2000 to 2010' bị sai cấu trúc ngữ pháp (thừa từ 'a period of' ghép với 'from...to'). Đúng phải là 'between 2000 and 2010' hoặc 'over a 10-year period...')."
+      },
+      {
+        question: "Cấu trúc Mở bài 'Level 2' (Nâng cao) thường sử dụng kỹ thuật nào để đạt điểm cao ở tiêu chí Lexical Resource & Grammatical Range?",
+        options: [
+          "A. Giữ nguyên danh từ chỉ đối tượng và chỉ thay đổi duy nhất động từ tường thuật.",
+          "B. Chuyển từ cấu trúc danh từ (e.g. 'the consumption of energy') sang cấu trúc mệnh đề danh từ/ngữ pháp linh hoạt (e.g. 'how much energy was consumed').",
+          "C. Thêm các từ đánh giá cá nhân như 'surprisingly', 'interestingly' vào ngay câu mở đầu.",
+          "D. Dùng cấu trúc câu hỏi tu từ để thu hút người đọc."
+        ],
+        correct: 1,
+        explanation: "Mở bài Level 2 biến đổi linh hoạt giữa danh từ (the consumption of...) và mệnh đề quan hệ/ngữ cảnh (how much... was consumed) giúp nâng điểm LR và GRA."
+      },
+      {
+        question: "Khi đề bài cho đối tượng là danh từ KHÔNG đếm được (ví dụ: 'water consumption'), cấu trúc paraphrase nào sau đây là ĐÚNG?",
+        options: [
+          "A. the number of water consumed",
+          "B. how many water was consumed",
+          "C. the amount of water consumed",
+          "D. the total numbers of water being used"
+        ],
+        correct: 2,
+        explanation: "'Water' là danh từ không đếm được nên phải dùng 'amount of' hoặc 'how much', không dùng 'number' hay 'how many'."
+      },
+      {
+        question: "[True/False] Trong câu Introduction của Task 1, bạn NÊN đưa ra giải thích nguyên nhân tại sao số liệu lại tăng hoặc giảm.",
+        options: [
+          "A. True (Đúng)",
+          "B. False (Sai)"
+        ],
+        correct: 1,
+        explanation: "Task 1 chỉ báo cáo số liệu thực tế, tuyệt đối không suy đoán hoặc giải thích nguyên nhân cá nhân."
+      },
+      {
+        question: "[True/False] Có thể thay thế từ 'shows' bằng 'compares' nếu biểu đồ cung cấp số liệu của từ 2 đối tượng/quốc gia/hạng mục trở lên.",
+        options: [
+          "A. True (Đúng)",
+          "B. False (Sai)"
+        ],
+        correct: 0,
+        explanation: "Từ 'compares' áp dụng rất chuẩn xác khi có từ 2 đối tượng/quốc gia/hạng mục trở lên."
+      },
+      {
+        question: "[True/False] Cụm từ 'in three different countries' có thể được paraphrase thành 'in England, France and Germany' nếu đề bài có ghi rõ tên 3 quốc gia này.",
+        options: [
+          "A. True (Đúng)",
+          "B. False (Sai)"
+        ],
+        correct: 0,
+        explanation: "Liệt kê danh từ riêng cụ thể thay cho từ chỉ nhóm 'three different countries' là phương pháp paraphrase được đánh giá cao."
+      },
+      {
+        question: "[True/False] Dùng cụm 'the proportion of' để thay thế cho 'the number of' trong mọi trường hợp mô tả số liệu.",
+        options: [
+          "A. True (Đúng)",
+          "B. False (Sai)"
+        ],
+        correct: 1,
+        explanation: "'Proportion' đi với phần trăm (%), còn 'number' đi với danh từ đếm được số nhiều."
+      },
+      {
+        question: "[True/False] Cụm từ 'over the period shown' chỉ nên sử dụng khi đề bài có cung cấp rõ ràng các mốc thời gian cụ thể.",
+        options: [
+          "A. True (Đúng)",
+          "B. False (Sai)"
+        ],
+        correct: 0,
+        explanation: "Cụm 'over the period shown' chỉ áp dụng cho biểu đồ động có khoảng thời gian xác định."
+      },
+      {
+        question: "Chọn từ/cụm từ thích hợp nhất điền vào chỗ trống (1):\n'The line graph _________ information about how much electricity was generated in two European countries from 2005 to 2020.'",
+        options: [
+          "A. proves",
+          "B. provides",
+          "C. recommends",
+          "D. analyzes"
+        ],
+        correct: 1,
+        explanation: "'Provides information about...' là collocations chuẩn. 'Proves' hay 'recommends' không hợp văn phong báo cáo."
+      },
+      {
+        question: "Chọn cụm từ thích hợp điền vào chỗ trống (2) khi mô tả tỷ lệ phần trăm người sử dụng Internet:\n'The pie chart illustrates the _________ of households with internet access in Vietnam in 2022.'",
+        options: [
+          "A. amount",
+          "B. number",
+          "C. percentage",
+          "D. ratio"
+        ],
+        correct: 2,
+        explanation: "'Internet access' đo lường bằng tỷ lệ phần trăm hộ gia đình (%) nên dùng 'percentage'."
+      },
+      {
+        question: "Chọn cụm giới từ chỉ thời gian chính xác điền vào chỗ trống (3):\n'The bar chart compares car sales in London _________ 2015 and 2020.'",
+        options: [
+          "A. from",
+          "B. between",
+          "C. during",
+          "D. through"
+        ],
+        correct: 1,
+        explanation: "Đi với 'and' ở vế sau thì giới từ đằng trước phải là 'between' (between 2015 and 2020)."
+      },
+      {
+        question: "Chọn cấu trúc phù hợp điền vào chỗ trống (4) đối với danh từ đếm được số nhiều 'cars':\n'The table displays _________ registered vehicles in three cities over a 5-year period.'",
+        options: [
+          "A. the amount of",
+          "B. how much",
+          "C. the number of",
+          "D. the percentage for"
+        ],
+        correct: 2,
+        explanation: "'Cars/registered vehicles' là danh từ đếm được số nhiều nên bắt buộc dùng 'the number of'."
+      },
+      {
+        question: "Từ nào được sử dụng chính xác nhất để chỉ 'tỷ lệ phần trăm trên tổng số 100%' (ký hiệu %)?",
+        options: [
+          "A. Rate",
+          "B. Ratio",
+          "C. Percentage",
+          "D. Pace"
+        ],
+        correct: 2,
+        explanation: "'Percentage' là từ chỉ tỷ lệ phần trăm biểu diễn dưới dạng % trên tổng số 100."
+      },
+      {
+        question: "Thuật ngữ 'Ratio' có ý nghĩa chính xác là gì trong báo cáo số liệu?",
+        options: [
+          "A. Tỷ lệ phần trăm của một đối tượng duy nhất.",
+          "B. Tỷ lệ so sánh mối tương quan định lượng giữa hai hay nhiều tập hợp/đối tượng (vd: 2:1 hoặc 3:5).",
+          "C. Tốc độ tăng trưởng của biểu đồ qua các năm.",
+          "D. Tổng số lượng tuyệt đối của danh từ đếm được."
+        ],
+        correct: 1,
+        explanation: "'Ratio' thể hiện tỷ lệ so sánh đối ứng giữa 2 hay nhiều nhóm (ví dụ tỷ lệ nam:nữ = 2:1)."
+      },
+      {
+        question: "Từ 'Rate' trong IELTS Task 1 thường được dùng trong ngữ cảnh nào sau đây?",
+        options: [
+          "A. Mô tả tỷ lệ biểu thị tốc độ, tần suất hoặc mức độ thay đổi đo lường (vd: birth rate, unemployment rate, exchange rate).",
+          "B. Thay thế hoàn toàn cho từ 'number' khi đứng trước danh từ đếm được số nhiều.",
+          "C. Đứng trước biểu tượng phần trăm % để chỉ quy mô tổng thể.",
+          "D. Chỉ dùng duy nhất khi mô tả biểu đồ hình tròn (Pie chart)."
+        ],
+        correct: 0,
+        explanation: "'Rate' chỉ tốc độ, tỷ lệ phát sinh hoặc tần suất đo lường (birth rate, unemployment rate, inflation rate...)."
+      },
+      {
+        question: "Xác định câu Mở bài có cách dùng từ 'percentage/rate/ratio' BỊ SAI trong các lựa chọn sau:",
+        options: [
+          "A. The pie chart shows the percentage of women working in executive positions.",
+          "B. The graph displays the unemployment rate in the UK over a ten-year period.",
+          "C. The table illustrates the percentage of males to females entering university as 2:1.",
+          "D. The bar chart compares the ratio of male and female teachers in primary schools."
+        ],
+        correct: 2,
+        explanation: "Tỷ lệ 2:1 là so sánh đối ứng giữa 2 tập hợp nam và nữ nên phải dùng 'ratio', dùng 'percentage' ở đây là sai."
+      },
+      {
+        question: "Cho đề bài gốc: 'The chart shows the proportion of energy produced from renewable sources in France between 2010 and 2020.'\nCâu paraphrase nào sau đây đạt tiêu chuẩn Band 7.0+ và ĐÚNG ngữ pháp nhất?",
+        options: [
+          "A. The chart illustrates how much energy was produced from renewable sources in France from 2010 to 2020.",
+          "B. The chart illustrates the percentage of renewable energy generated in France over a 10-year period starting in 2010.",
+          "C. The chart compares the rate of energy which produced from renewable sources in France between 2010 to 2020.",
+          "D. The chart shows the number of renewable energy produced in France from 2010 to 2020."
+        ],
+        correct: 1,
+        explanation: "B đúng ngữ pháp và dùng 'percentage of renewable energy generated'. C sai ngữ pháp ('between 2010 to'), D sai từ ('number of renewable energy')."
+      },
+      {
+        question: "Cho đề bài gốc: 'The table compares the number of international visitors to Australia, UK, and USA in 2019.'\nPhương án nào là Mở bài xuất sắc nhất (Level 2 - Nâng cao)?",
+        options: [
+          "A. The table shows the number of international visitors going to Australia, UK, and USA in 2019.",
+          "B. The table compares how many foreign tourists traveled to Australia, the UK, and the USA in the year 2019.",
+          "C. The table compares the amount of international tourists who visited Australia, UK and USA in 2019.",
+          "D. The table illustrates the ratio of international tourists visiting Australia, UK and USA in 2019."
+        ],
+        correct: 1,
+        explanation: "B biến đổi 'number of international visitors' thành 'how many foreign tourists traveled to...' rất mượt mà và chính xác. A lặp từ đề bài, C dùng sai 'amount of' cho người, D dùng sai 'ratio'."
+      }
+    ];
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let studentName = "";
+
+    // DOM Elements
+    const startScreen = document.getElementById("startScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultScreen = document.getElementById("resultScreen");
+    const studentNameInput = document.getElementById("studentName");
+    const startBtn = document.getElementById("startBtn");
+    const questionProgress = document.getElementById("questionProgress");
+    const studentDisplay = document.getElementById("studentDisplay");
+    const questionText = document.getElementById("questionText");
+    const optionsList = document.getElementById("optionsList");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackTitle = document.getElementById("feedbackTitle");
+    const feedbackExplanation = document.getElementById("feedbackExplanation");
+    const nextBtn = document.getElementById("nextBtn");
+    const resultName = document.getElementById("resultName");
+    const resultScore = document.getElementById("resultScore");
+    const restartBtn = document.getElementById("restartBtn");
+
+    // Enable start button only when name is entered
+    studentNameInput.addEventListener("input", function() {
+      if (this.value.trim().length > 0) {
+        startBtn.removeAttribute("disabled");
+      } else {
+        startBtn.setAttribute("disabled", "true");
+      }
+    });
+
+    // Fisher-Yates shuffle algorithm
+    function shuffleArray(array) {
+      let arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    startBtn.addEventListener("click", function() {
+      studentName = studentNameInput.value.trim();
+      if (!studentName) return;
+
+      currentQuestions = shuffleArray(questionsData);
+      currentIndex = 0;
+      score = 0;
+
+      startScreen.classList.remove("active");
+      quizScreen.classList.add("active");
+      loadQuestion();
+    });
+
+    function loadQuestion() {
+      feedbackBox.className = "feedback-box";
+      feedbackTitle.textContent = "";
+      feedbackExplanation.textContent = "";
+      nextBtn.style.display = "none";
+
+      const q = currentQuestions[currentIndex];
+      questionProgress.textContent = `Câu ${currentIndex + 1} / 20`;
+      studentDisplay.textContent = `Học viên: ${studentName}`;
+      questionText.textContent = q.question;
+
+      optionsList.innerHTML = "";
+      q.options.forEach((opt, idx) => {
+        const card = document.createElement("div");
+        card.className = "option-card";
+        
+        const textSpan = document.createElement("span");
+        textSpan.textContent = opt;
+        card.appendChild(textSpan);
+
+        card.addEventListener("click", () => selectOption(idx, card));
+        optionsList.appendChild(card);
+      });
+    }
+
+    function selectOption(selectedIdx, selectedCard) {
+      // Lock all options
+      const cards = optionsList.querySelectorAll(".option-card");
+      cards.forEach(c => c.classList.add("locked"));
+
+      const q = currentQuestions[currentIndex];
+      const isCorrect = selectedIdx === q.correct;
+
+      if (isCorrect) {
+        score++;
+        selectedCard.classList.add("correct");
+        const tag = document.createElement("span");
+        tag.className = "option-tag";
+        tag.textContent = "Bạn đã chọn (Đúng)";
+        selectedCard.appendChild(tag);
+
+        feedbackBox.className = "feedback-box correct-fb";
+        feedbackTitle.textContent = "Chính xác! Chúc mừng bạn!";
+        feedbackExplanation.textContent = q.explanation;
+      } else {
+        selectedCard.classList.add("incorrect");
+        const wrongTag = document.createElement("span");
+        wrongTag.className = "option-tag";
+        wrongTag.textContent = "Bạn đã chọn";
+        selectedCard.appendChild(wrongTag);
+
+        // Highlight correct option
+        cards[q.correct].classList.add("correct");
+        const correctTag = document.createElement("span");
+        correctTag.className = "option-tag";
+        correctTag.textContent = "Đáp án đúng";
+        cards[q.correct].appendChild(correctTag);
+
+        feedbackBox.className = "feedback-box incorrect-fb";
+        feedbackTitle.textContent = "Chưa chính xác!";
+        feedbackExplanation.textContent = q.explanation;
+      }
+
+      nextBtn.style.display = "inline-block";
+      if (currentIndex === currentQuestions.length - 1) {
+        nextBtn.textContent = "Xem kết quả";
+      } else {
+        nextBtn.textContent = "Câu tiếp theo";
+      }
+    }
+
+    nextBtn.addEventListener("click", function() {
+      currentIndex++;
+      if (currentIndex < currentQuestions.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      quizScreen.classList.remove("active");
+      resultScreen.classList.add("active");
+
+      resultName.textContent = `Học viên: ${studentName}`;
+      resultScore.textContent = `Số câu đúng: ${score} / 20`;
+    }
+
+    restartBtn.addEventListener("click", function() {
+      studentNameInput.value = "";
+      startBtn.setAttribute("disabled", "true");
+      resultScreen.classList.remove("active");
+      startScreen.classList.add("active");
+    });
+  </script>
+</body>
+</html>
