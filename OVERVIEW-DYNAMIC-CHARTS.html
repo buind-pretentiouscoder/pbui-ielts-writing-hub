@@ -1,0 +1,721 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Viết OVERVIEW (DYNAMIC CHARTS)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a deep-blue title band above a left-aligned reading column; one page at a time. The passage group (Q12-16) widens into two columns. */
+:root {
+  --navy: #0B2A5B;
+  --on-navy: #FFFFFF;
+  --bg: #F2F5FA;
+  --surface: #FFFFFF;
+  --ink: #0E1A33;
+  --muted: #55627C;
+  --line: #CCD6E6;
+  --head: #0B2A5B;
+  --accent: #0B2A5B;
+  --accent-hover: #123B7C;
+  --on-accent: #FFFFFF;
+  --pick: #E5ECF8;
+  --ok-text: #16703E;
+  --ok-solid: #16703E;
+  --ok-bg: #E0F3E7;
+  --bad-text: #B3261E;
+  --bad-solid: #B3261E;
+  --bad-bg: #FBE5E3;
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --fs: 23px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1224;
+    --surface: #12203F;
+    --ink: #E8EDF7;
+    --muted: #A5B2CB;
+    --line: #2B3C62;
+    --head: #A9C1F3;
+    --accent: #3866C4;
+    --accent-hover: #4A78D6;
+    --pick: #1B2D55;
+    --ok-text: #72D69D;
+    --ok-solid: #2A9A60;
+    --ok-bg: #12392A;
+    --bad-text: #FF9D95;
+    --bad-solid: #D4463D;
+    --bad-bg: #4A1E1B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1224;
+  --surface: #12203F;
+  --ink: #E8EDF7;
+  --muted: #A5B2CB;
+  --line: #2B3C62;
+  --head: #A9C1F3;
+  --accent: #3866C4;
+  --accent-hover: #4A78D6;
+  --pick: #1B2D55;
+  --ok-text: #72D69D;
+  --ok-solid: #2A9A60;
+  --ok-bg: #12392A;
+  --bad-text: #FF9D95;
+  --bad-solid: #D4463D;
+  --bad-bg: #4A1E1B;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: 1.5;
+}
+.wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.band { background: var(--navy); color: var(--on-navy); padding-block: 26px; }
+.band h1 {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+main.wrap { padding-block: 44px 72px; }
+
+.card {
+  max-width: 920px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 40px;
+}
+.card.wide { max-width: none; }
+.card h2 { margin: 0 0 16px; font-size: 1.15em; font-weight: 700; color: var(--head); text-wrap: balance; }
+.lead { margin: 0 0 32px; color: var(--muted); }
+
+label.field { display: block; margin-bottom: 10px; font-weight: 600; }
+input[type="text"] {
+  display: block;
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 14px 18px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 6px;
+}
+input[type="text"]::placeholder { color: var(--muted); opacity: .8; }
+input[type="text"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 14px 34px;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color .15s;
+}
+.btn:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn:focus-visible { outline: 3px solid var(--head); outline-offset: 3px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Question page */
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 24px; margin-bottom: 12px; }
+.counter { font-weight: 700; color: var(--head); font-variant-numeric: tabular-nums; }
+.who { font-size: .75em; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 30px; }
+.bar > span { display: block; height: 100%; width: 0; background: var(--head); transition: width .25s; }
+
+.item + .item { margin-top: 36px; padding-top: 32px; border-top: 1px solid var(--line); }
+.question { margin: 0 0 24px; font-size: 1em; font-weight: 600; line-height: 1.5; white-space: pre-line; }
+
+.options { display: grid; gap: 12px; }
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 20px;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+.opt:hover:not(:disabled) { border-color: var(--head); background: var(--pick); }
+.opt:focus-visible { outline: 3px solid var(--head); outline-offset: 2px; }
+.opt:disabled { cursor: default; opacity: 1; color: var(--ink); }
+.letter {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  font-weight: 700;
+  color: var(--head);
+  background: var(--pick);
+  border-radius: 4px;
+}
+.txt { min-width: 0; padding-top: 5px; overflow-wrap: anywhere; }
+.tag { display: block; margin-top: 4px; font-size: .65em; font-weight: 600; letter-spacing: .02em; }
+.opt.is-correct { border-color: var(--ok-solid); background: var(--ok-bg); }
+.opt.is-correct .letter { background: var(--ok-solid); color: #fff; }
+.opt.is-correct .tag { color: var(--ok-text); }
+.opt.is-wrong { border-color: var(--bad-solid); background: var(--bad-bg); }
+.opt.is-wrong .letter { background: var(--bad-solid); color: #fff; }
+.opt.is-wrong .tag { color: var(--bad-text); }
+
+.feedback { margin-top: 24px; padding: 18px 22px; border: 2px solid var(--line); border-radius: 6px; }
+.feedback.ok { background: var(--ok-bg); border-color: var(--ok-solid); }
+.feedback.no { background: var(--bad-bg); border-color: var(--bad-solid); }
+.feedback .verdict { margin: 0; font-weight: 700; }
+.feedback.ok .verdict { color: var(--ok-text); }
+.feedback.no .verdict { color: var(--bad-text); }
+.feedback .why { margin: 10px 0 0; }
+.actions { display: flex; justify-content: flex-end; margin-top: 32px; }
+
+/* Passage group (Q12-16) */
+.group-title { margin: 0 0 24px; }
+.group-layout { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 36px; align-items: start; }
+.passage {
+  position: sticky;
+  top: 16px;
+  padding: 24px 26px;
+  background: var(--pick);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.passage-text { margin: 0; line-height: 1.75; }
+.passage-text .blank { font-weight: 700; color: var(--head); white-space: nowrap; }
+.subs { min-width: 0; }
+
+/* Result */
+.who-label { margin: 0; font-size: .75em; color: var(--muted); }
+.who-name { margin: 0 0 28px; font-weight: 700; overflow-wrap: anywhere; }
+.score { margin: 0 0 14px; font-size: 1.45em; font-weight: 700; color: var(--head); font-variant-numeric: tabular-nums; }
+.result-bar { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; margin-bottom: 36px; }
+.result-bar > span { display: block; height: 100%; background: var(--head); }
+
+@media (max-width: 1000px) {
+  .group-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .passage { position: static; }
+}
+@media (max-width: 640px) {
+  .card { padding: 22px; }
+  main.wrap { padding-block: 28px 48px; }
+  .opt { padding: 12px 14px; gap: 12px; }
+  .letter { width: 38px; height: 38px; }
+  .actions .btn, #start-form .btn, #restart { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <h1>Viết OVERVIEW (DYNAMIC CHARTS)</h1>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Start screen -->
+  <section class="card" id="screen-start" aria-labelledby="start-title">
+    <h2 id="start-title">Bắt đầu làm bài</h2>
+    <p class="lead">Bài kiểm tra gồm 21 câu trắc nghiệm về cách viết Overview cho biểu đồ động trong IELTS Writing Task 1. Thứ tự câu hỏi được sắp xếp ngẫu nhiên mỗi lần làm bài.</p>
+    <form id="start-form" novalidate>
+      <label class="field" for="student-name">Họ và tên</label>
+      <input type="text" id="student-name" name="student-name" placeholder="Nhập họ và tên của bạn" autocomplete="name" maxlength="80">
+      <button type="submit" class="btn" id="start-btn" disabled>Bắt đầu</button>
+    </form>
+  </section>
+
+  <!-- Question page (normal question, or the passage group) -->
+  <section class="card" id="screen-quiz" hidden>
+    <div class="meta">
+      <span class="counter" id="counter"></span>
+      <span class="who" id="who"></span>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="bar-fill"></span></div>
+    <div id="page-body"></div>
+    <div class="actions">
+      <button type="button" class="btn" id="next-btn" hidden>Câu tiếp theo</button>
+    </div>
+  </section>
+
+  <!-- Result screen -->
+  <section class="card" id="screen-result" aria-labelledby="result-title" hidden>
+    <h2 id="result-title">Kết quả bài làm</h2>
+    <p class="who-label">Học sinh</p>
+    <p class="who-name" id="result-name"></p>
+    <p class="score" id="result-score"></p>
+    <div class="result-bar" aria-hidden="true"><span id="result-fill"></span></div>
+    <button type="button" class="btn" id="restart">Làm lại</button>
+  </section>
+</main>
+
+<script id="quiz-data">
+// PAGES: each page is shuffled as one unit. A page has items (1 question, or 5 for the passage group) and an optional passage.
+// Item: q = question, options = answers in A–D order, correct = index of the right option, explanation = shown after a wrong answer.
+const GROUP_TITLE = "Đọc đoạn Overview sau và chọn từ thích hợp cho từng vị trí trống";
+
+const PAGES = [
+  { items: [{
+    q: "Vị trí chuẩn của đoạn Overview (Tổng quan) trong cấu trúc bài IELTS Writing Task 1 là ở đâu?",
+    options: [
+      "Nằm ở cuối bài viết, đóng vai trò như đoạn kết luận (Conclusion) rút ra bài học.",
+      "Được tách thành 01 đoạn riêng biệt, đặt ngay sau câu Mở bài (Introduction).",
+      "Gộp chung vào đoạn Thân bài 1 (Body 1) để tiết kiệm số lượng đoạn văn.",
+      "Không cần thiết phải viết thành đoạn riêng mà có thể bỏ qua nếu thân bài đã đủ từ."
+    ],
+    correct: 1,
+    explanation: "Lý thuyết mục 2.1 nêu rõ: Overview nên được tách ra thành 1 đoạn riêng biệt, xếp ngay sau câu mở bài (Introduction)."
+  }] },
+  { items: [{
+    q: "Yếu tố cốt lõi KHÔNG THỂ THIẾU khi viết Overview cho Biểu đồ động (Dynamic Chart) là gì?",
+    options: [
+      "Số liệu cụ thể tại năm đầu tiên và số liệu chính xác tại năm cuối cùng.",
+      "Giải thích nguyên nhân dẫn đến sự tăng/giảm và dự đoán xu hướng tương lai.",
+      "Xu hướng chung (Trends - tăng/giảm)",
+      "Điểm nổi bật/Thứ tự dẫn đầu (Order/Highlight)."
+    ],
+    correct: 2,
+    explanation: "Đoạn Overview cho Dynamic Chart gồm 2 yếu tố: TRENDS (Xu hướng tăng/giảm – KHÔNG THỂ THIẾU) và ORDER / HIGHLIGHT (Cái nào cao nhất/thấp nhất hoặc sự thay đổi đột ngột – Có bài có, có bài không)."
+  }] },
+  { items: [{
+    q: "QUY TẮC VÀNG quan trọng nhất về mặt dữ liệu khi viết đoạn Overview là gì?",
+    options: [
+      "TUYỆT ĐỐI KHÔNG đưa số liệu cụ thể (chi tiết số đo, %, tiền, năm lẻ) vào đoạn Overview.",
+      "Bắt buộc phải trích dẫn ít nhất 3 con số nổi bật nhất để làm bằng chứng chứng minh.",
+      "Chỉ đưa số liệu của đối tượng cao nhất và ẩn đi số liệu của đối tượng thấp nhất.",
+      "Liệt kê toàn bộ các mốc thời gian xuất hiện trên trục hoành của biểu đồ."
+    ],
+    correct: 0,
+    explanation: "Quy tắc cốt lõi: Overview chỉ tổng thuật bức tranh toàn cảnh, TUYỆT ĐỐI KHÔNG đưa số liệu chi tiết cụ thể vào đoạn này (số liệu chi tiết thuộc về 2 đoạn Thân bài)."
+  }] },
+  { items: [{
+    q: "Phương pháp nhanh và chính xác nhất để xác định Xu hướng chung (Trends) của biểu đồ động là gì?",
+    options: [
+      "Tính trung bình cộng tất cả các điểm dữ liệu qua các năm.",
+      "Chỉ quan sát các biến động trồi sụt ở giai đoạn giữa chu kỳ.",
+      "Đếm số lượng năm tăng và số lượng năm giảm của từng đường.",
+      "So sánh trực tiếp điểm bắt đầu (đầu kỳ) và điểm kết thúc (cuối kỳ) của đối tượng."
+    ],
+    correct: 3,
+    explanation: "Lý thuyết mục 1 chỉ rõ cách xác định xu hướng: Nhìn vào điểm đầu và điểm cuối (Đầu lớn hơn cuối -> giảm; Cuối lớn hơn đầu -> tăng)."
+  }] },
+  { items: [{
+    q: "Lỗi sai nào sau đây có thể kéo điểm tiêu chí Task Achievement (TA) của bài viết xuống Band 5.0 hoặc thấp hơn?",
+    options: [
+      "Bắt đầu đoạn Overview bằng cụm từ tín hiệu 'Overall, it is clear that...'.",
+      "Sử dụng từ nối 'while' để nối hai xu hướng trái ngược nhau của hai đối tượng.",
+      "Báo cáo sai xu hướng (đối tượng tăng lại viết giảm) hoặc đưa số liệu chi tiết vào Overview.",
+      "Mô tả đối tượng luôn giữ vị trí cao nhất suốt giai đoạn bằng cụm 'remained in the leading position'."
+    ],
+    correct: 2,
+    explanation: "Mục 'Một số lỗi thường gặp' nhấn mạnh: Báo cáo sai xu hướng hoặc đưa sai số liệu/đưa số liệu vào Overview sẽ kéo điểm bài viết xuống 5.0 hoặc dưới 5.0."
+  }] },
+  { items: [{
+    q: "Cụm từ nào sau đây thích hợp nhất để diễn tả đối tượng A bị đối tượng B vượt mặt ở cuối kỳ?",
+    options: [
+      "Subject A remained in the leading position until the end of the period.",
+      "Subject B had overtaken/surpassed Subject A to become the most popular by the end of the period.",
+      "Subject A and Subject B experienced a dramatic fall consistently.",
+      "Subject B fluctuated heavily around the same level as Subject A."
+    ],
+    correct: 1,
+    explanation: "Cấu trúc chuẩn miêu tả sự vượt mặt: '(Đối tượng 1) had overtaken/surpassed (Đối tượng 2) to become the most (...) by the end of the period'."
+  }] },
+  { items: [{
+    q: "Nhận định: Trong đoạn Overview của biểu đồ động, người viết NÊN đưa ra giải thích cá nhân về lý do vì sao doanh thu hoặc số liệu lại tăng/giảm mạnh.",
+    options: ["ĐÚNG (True)", "SAI (False)"],
+    correct: 1,
+    explanation: "Trong Task 1, người viết chỉ báo cáo thông tin số liệu thực tế, KHÔNG ĐƯỢC đưa ý kiến cá nhân hoặc giải thích nguyên nhân nguyên do."
+  }] },
+  { items: [{
+    q: "Nhận định: Cụm từ 'Overall, what stands out from the graph is that...' là một câu mở đầu chuẩn mực và hiệu quả để giới thiệu đoạn Overview.",
+    options: ["ĐÚNG (True)", "SAI (False)"],
+    correct: 0,
+    explanation: "Cụm 'Overall, what stands out from the graph is that...' là mẫu câu mở đầu chuẩn Band 7.0+ được khuyên dùng trong tài liệu học tập."
+  }] },
+  { items: [{
+    q: "Nhận định: Nếu biểu đồ có 4 đường dữ liệu, đoạn Overview bắt buộc phải miêu tả chi tiết từng đường một theo đúng thứ tự xuất hiện.",
+    options: ["ĐÚNG (True)", "SAI (False)"],
+    correct: 1,
+    explanation: "Overview chỉ chọn ra các xu hướng chính và điểm nổi bật nhất (key features), không cần liệt kê toàn bộ từng đường gây rườm rà."
+  }] },
+  { items: [{
+    q: "Nhận định: Cụm cấu trúc '(Subject) consistently ranked last throughout the surveyed period' dùng để làm nổi bật đối tượng luôn đứng vị trí thấp nhất.",
+    options: ["ĐÚNG (True)", "SAI (False)"],
+    correct: 0,
+    explanation: "Cấu trúc '(Subject) consistently ranked last throughout the surveyed period' chính xác dùng để miêu tả đối tượng luôn xếp chót."
+  }] },
+  { items: [{
+    q: "Nhận định: Việc chia thì động từ ở thì Hiện tại đơn (Present Simple) là bắt buộc cho toàn bộ bài viết Task 1, bất kể mốc thời gian trong đề bài là 2000 - 2010.",
+    options: ["ĐÚNG (True)", "SAI (False)"],
+    correct: 1,
+    explanation: "Thì của động từ phụ thuộc vào mốc thời gian trong đề bài. Nếu mốc thời gian trong quá khứ (2000-2010), phải dùng thì Quá khứ đơn (Past Simple)."
+  }] },
+
+  // Questions 12–16: one page, shared passage
+  {
+    passage: "Overall, what (12) __________ from the graph is that there were considerable (13) __________ trends in the income of both Bernie's Buns and Robbie's Bakery, (14) __________ the earnings of Lovely Loaves saw a substantial fall over the period in question. In addition, Lovely Loaves (15) __________ the most popular bakery at the start of the period, but Robbie's Bakery subsequently (16) __________ all competitors to take the leading position by 2010.",
+    items: [
+      {
+        q: "Lựa chọn từ thích hợp cho vị trí (12):",
+        options: ["remained", "surpassed", "stands out", "upward"],
+        correct: 2,
+        explanation: "Cụm từ cố định chuẩn: 'Overall, what stands out from the graph is that...' (Điểm nổi bật từ biểu đồ là...)."
+      },
+      {
+        q: "Lựa chọn từ thích hợp cho vị trí (13):",
+        options: ["upward", "while", "substantial", "stands out"],
+        correct: 0,
+        explanation: "Bernie's Buns và Robbie's Bakery đều có xu hướng tăng -> chọn tính từ 'upward' (upward trends)."
+      },
+      {
+        q: "Lựa chọn từ thích hợp cho vị trí (14):",
+        options: ["surpassed", "upward", "remained", "while"],
+        correct: 3,
+        explanation: "Sử dụng liên từ 'while' (trong khi) để nối hai mệnh đề mang xu hướng trái ngược nhau (tăng vs giảm)."
+      },
+      {
+        q: "Lựa chọn từ thích hợp cho vị trí (15):",
+        options: ["stands out", "remained", "while", "upward"],
+        correct: 1,
+        explanation: "Lovely Loaves duy trì vị trí được yêu thích nhất ở thời điểm đầu -> chọn động từ 'remained' (remained the most popular)."
+      },
+      {
+        q: "Lựa chọn từ thích hợp cho vị trí (16):",
+        options: ["substantial", "upward", "surpassed", "remained"],
+        correct: 2,
+        explanation: "Robbie's Bakery vượt qua tất cả các đối thủ -> chọn động từ dạng quá khứ 'surpassed' (surpassed all competitors)."
+      }
+    ]
+  },
+
+  { items: [{
+    q: "Chọn câu viết Overview ghép 2 xu hướng (Trends) chuẩn xác và mượt mà nhất theo văn phong Band 7.0+:",
+    options: [
+      "Overall, while the public sector exhibited a marked upward trend over the decade, the private sector experienced a dramatic decline.",
+      "Overall, public sector increased to 50% and private sector decreased to 20% in 2010.",
+      "Overall, the line graph shows that public sector went up but private sector went down heavily because of economic crisis.",
+      "Overall, public sector is higher than private sector from 2000 to 2010."
+    ],
+    correct: 0,
+    explanation: "Phương án A kết hợp mượt mà 2 mệnh đề xu hướng trái ngược bằng liên từ 'while' và từ vựng học thuật (exhibited a marked upward trend / experienced a dramatic decline) không chứa số liệu chi tiết."
+  }] },
+  { items: [{
+    q: "Cụm từ gạch chân nào sau đây có thể dùng ĐỒNG NGHĨA để thay thế cho cụm 'over the period in question' trong Overview?",
+    options: [
+      "in the next few years",
+      "at the beginning of the chart",
+      "during the second decade",
+      "throughout the surveyed period"
+    ],
+    correct: 3,
+    explanation: "Cụm 'over the period in question' (trong suốt giai đoạn được đề cập) đồng nghĩa với 'throughout the surveyed period'."
+  }] },
+  { items: [{
+    q: "Trong hai câu của đoạn Overview, từ nối nào sau đây được dùng chuẩn xác nhất ở đầu câu thứ 2 để giới thiệu điểm nổi bật về thứ tự (Order/Highlight)?",
+    options: [
+      "However,",
+      "In addition, / Another interesting point is that",
+      "On the other hand,",
+      "For example,"
+    ],
+    correct: 1,
+    explanation: "Đoạn Overview thường gồm 2 câu: Câu 1 nêu Trends, Câu 2 dùng 'In addition,' hoặc 'Another interesting point is that...' để nêu Order/Highlight."
+  }] },
+  { items: [{
+    q: "Sắp xếp các cụm từ sau thành câu Overview hoàn chỉnh miêu tả sự vượt mặt:\n(1) to become the most profitable bakery / (2) Robbie's Bakery had surpassed Lovely Loaves / (3) by the end of the decade / (4) By 2010,",
+    options: [
+      "(4) - (1) - (2) - (3)",
+      "(2) - (1) - (4) - (3)",
+      "(4) - (2) - (1) - (3)",
+      "(3) - (1) - (4) - (2)"
+    ],
+    correct: 2,
+    explanation: "Cấu trúc hoàn chỉnh: '(4) By 2010, (2) Robbie's Bakery had surpassed Lovely Loaves (1) to become the most profitable bakery (3) by the end of the decade.'"
+  }] },
+  { items: [{
+    q: "Xác định câu Overview bị mắc LỖI NGHIÊM TRỌNG về mặt tiêu chuẩn chấm điểm Task 1:",
+    options: [
+      "Overall, the income of Robbie's Bakery rose significantly to reach 105,000 pounds in 2010, which was 40% higher than Bernie's Buns.",
+      "Overall, Bernie's Buns and Robbie's Bakery both experienced upward trends in their annual earnings.",
+      "Overall, despite starting as the least popular bakery, Robbie's Bakery rose to dominate the market by the end of the period.",
+      "Overall, while self-employment figures grew steadily, private sector employment saw a sharp drop."
+    ],
+    correct: 0,
+    explanation: "Phương án A phạm lỗi nghiêm trọng do ĐƯA SỐ LIỆU CỤ THỂ (105,000 pounds, 40%) vào đoạn Overview, vi phạm tiêu chí chấm điểm Task Achievement."
+  }] }
+];
+</script>
+
+<script>
+(function () {
+  var LETTERS = ["A", "B", "C", "D"];
+  var $ = function (id) { return document.getElementById(id); };
+
+  var screens = { start: $("screen-start"), quiz: $("screen-quiz"), result: $("screen-result") };
+  var nameInput = $("student-name");
+  var startBtn = $("start-btn");
+  var nextBtn = $("next-btn");
+  var body = $("page-body");
+
+  var TOTAL = PAGES.reduce(function (n, p) { return n + p.items.length; }, 0);
+
+  var order = [];          // shuffled indices into PAGES
+  var pageIdx = 0;         // position in the shuffled order
+  var completed = 0;       // questions finished on earlier pages
+  var pageCount = 1;       // questions on the current page
+  var answeredOnPage = 0;
+  var score = 0;
+  var studentName = "";
+
+  // Fisher–Yates shuffle (returns a new array)
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function newRound() {
+    order = shuffle(PAGES.map(function (_, i) { return i; }));
+    pageIdx = 0;
+    completed = 0;
+    answeredOnPage = 0;
+    score = 0;
+  }
+
+  function show(name) {
+    Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== name); });
+    window.scrollTo(0, 0);
+  }
+
+  function syncStartButton() {
+    startBtn.disabled = nameInput.value.trim().length === 0;
+  }
+
+  function setBar(done) {
+    $("bar-fill").style.width = (done / TOTAL * 100) + "%";
+  }
+
+  function addTag(btn, label) {
+    var tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = label;
+    btn.querySelector(".txt").appendChild(tag);
+  }
+
+  // Passage text with the numbered blanks emphasised
+  function buildPassage(text) {
+    var p = document.createElement("p");
+    p.className = "passage-text";
+    text.split(/(\(\d+\) _+)/).forEach(function (part) {
+      if (/^\(\d+\) _+$/.test(part)) {
+        var s = document.createElement("span");
+        s.className = "blank";
+        s.textContent = part;
+        p.appendChild(s);
+      } else {
+        p.appendChild(document.createTextNode(part));
+      }
+    });
+    return p;
+  }
+
+  // One question block: stem, options, feedback. Each block locks on its own.
+  function buildItem(item, tag) {
+    var box = document.createElement("div");
+    box.className = "item";
+
+    var q = document.createElement(tag);
+    q.className = "question";
+    q.textContent = item.q;
+
+    var opts = document.createElement("div");
+    opts.className = "options";
+    opts.setAttribute("role", "group");
+    opts.setAttribute("aria-label", "Đáp án");
+
+    var fb = document.createElement("div");
+    fb.className = "feedback";
+    fb.setAttribute("role", "status");
+    fb.hidden = true;
+
+    var done = false;
+    var buttons = [];
+
+    item.options.forEach(function (text, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt";
+
+      var letter = document.createElement("span");
+      letter.className = "letter";
+      letter.textContent = LETTERS[i];
+
+      var txt = document.createElement("span");
+      txt.className = "txt";
+      txt.appendChild(document.createTextNode(text));
+
+      btn.appendChild(letter);
+      btn.appendChild(txt);
+      btn.addEventListener("click", function () { answer(i); });
+      buttons.push(btn);
+      opts.appendChild(btn);
+    });
+
+    function answer(i) {
+      if (done) return;
+      done = true;
+
+      var isRight = (i === item.correct);
+      buttons.forEach(function (b) { b.disabled = true; });
+
+      var verdict = document.createElement("p");
+      verdict.className = "verdict";
+
+      if (isRight) {
+        score++;
+        buttons[i].classList.add("is-correct");
+        addTag(buttons[i], "Đáp án đúng");
+        fb.className = "feedback ok";
+        verdict.textContent = "Chính xác! Chúc mừng bạn!";
+        fb.appendChild(verdict);
+      } else {
+        buttons[i].classList.add("is-wrong");
+        addTag(buttons[i], "Bạn đã chọn");
+        buttons[item.correct].classList.add("is-correct");
+        addTag(buttons[item.correct], "Đáp án đúng");
+        fb.className = "feedback no";
+        verdict.textContent = "Chưa đúng. Đáp án đúng là " + LETTERS[item.correct] + ".";
+        var why = document.createElement("p");
+        why.className = "why";
+        why.textContent = item.explanation;
+        fb.appendChild(verdict);
+        fb.appendChild(why);
+      }
+      fb.hidden = false;
+
+      answeredOnPage++;
+      setBar(completed + answeredOnPage);
+      if (answeredOnPage === pageCount) {
+        nextBtn.hidden = false;
+        nextBtn.focus();
+      }
+    }
+
+    box.appendChild(q);
+    box.appendChild(opts);
+    box.appendChild(fb);
+    return box;
+  }
+
+  function renderPage() {
+    var page = PAGES[order[pageIdx]];
+    pageCount = page.items.length;
+    answeredOnPage = 0;
+
+    var k = completed + 1;
+    $("counter").textContent = pageCount > 1
+      ? "Câu " + k + "–" + (k + pageCount - 1) + " / " + TOTAL
+      : "Câu " + k + " / " + TOTAL;
+    $("who").textContent = studentName;
+    setBar(completed);
+
+    screens.quiz.classList.toggle("wide", !!page.passage);
+    body.textContent = "";
+
+    if (page.passage) {
+      var title = document.createElement("h2");
+      title.className = "group-title";
+      title.textContent = GROUP_TITLE;
+
+      var layout = document.createElement("div");
+      layout.className = "group-layout";
+
+      var aside = document.createElement("aside");
+      aside.className = "passage";
+      aside.setAttribute("aria-label", "Đoạn Overview");
+      aside.appendChild(buildPassage(page.passage));
+
+      var subs = document.createElement("div");
+      subs.className = "subs";
+      page.items.forEach(function (it) { subs.appendChild(buildItem(it, "h3")); });
+
+      layout.appendChild(aside);
+      layout.appendChild(subs);
+      body.appendChild(title);
+      body.appendChild(layout);
+    } else {
+      body.appendChild(buildItem(page.items[0], "h2"));
+    }
+
+    nextBtn.hidden = true;
+    nextBtn.textContent = (pageIdx === order.length - 1) ? "Xem kết quả" : "Câu tiếp theo";
+  }
+
+  function showResult() {
+    $("result-name").textContent = studentName;
+    $("result-score").textContent = "Số câu đúng: " + score + " / " + TOTAL;
+    $("result-fill").style.width = (score / TOTAL * 100) + "%";
+    show("result");
+  }
+
+  $("start-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var value = nameInput.value.trim();
+    if (!value) return;
+    studentName = value;
+    renderPage();
+    show("quiz");
+  });
+
+  nameInput.addEventListener("input", syncStartButton);
+
+  nextBtn.addEventListener("click", function () {
+    completed += pageCount;
+    pageIdx++;
+    if (pageIdx >= order.length) {
+      showResult();
+    } else {
+      renderPage();
+      window.scrollTo(0, 0);
+    }
+  });
+
+  $("restart").addEventListener("click", function () {
+    newRound();
+    syncStartButton();
+    show("start");
+    nameInput.focus();
+  });
+
+  newRound();
+  syncStartButton();
+})();
+</script>
+
+</body></html>
