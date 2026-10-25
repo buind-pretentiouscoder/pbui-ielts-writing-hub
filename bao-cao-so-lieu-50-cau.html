@@ -1,0 +1,960 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Báo cáo số liệu</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a deep-blue title band above one centred reading column; one screen at a time (start, question, result). */
+:root {
+  --navy: #0B2A5B;
+  --on-navy: #FFFFFF;
+  --bg: #F2F5FA;
+  --surface: #FFFFFF;
+  --ink: #0E1A33;
+  --muted: #55627C;
+  --line: #CCD6E6;
+  --head: #0B2A5B;
+  --accent: #0B2A5B;
+  --accent-hover: #123B7C;
+  --on-accent: #FFFFFF;
+  --pick: #E5ECF8;
+  --ok-text: #16703E;
+  --ok-solid: #16703E;
+  --ok-bg: #E0F3E7;
+  --bad-text: #B3261E;
+  --bad-solid: #B3261E;
+  --bad-bg: #FBE5E3;
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --fs: 23px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1224;
+    --surface: #12203F;
+    --ink: #E8EDF7;
+    --muted: #A5B2CB;
+    --line: #2B3C62;
+    --head: #A9C1F3;
+    --accent: #3866C4;
+    --accent-hover: #4A78D6;
+    --pick: #1B2D55;
+    --ok-text: #72D69D;
+    --ok-solid: #2A9A60;
+    --ok-bg: #12392A;
+    --bad-text: #FF9D95;
+    --bad-solid: #D4463D;
+    --bad-bg: #4A1E1B;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1224;
+  --surface: #12203F;
+  --ink: #E8EDF7;
+  --muted: #A5B2CB;
+  --line: #2B3C62;
+  --head: #A9C1F3;
+  --accent: #3866C4;
+  --accent-hover: #4A78D6;
+  --pick: #1B2D55;
+  --ok-text: #72D69D;
+  --ok-solid: #2A9A60;
+  --ok-bg: #12392A;
+  --bad-text: #FF9D95;
+  --bad-solid: #D4463D;
+  --bad-bg: #4A1E1B;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: 1.5;
+}
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.band { background: var(--navy); color: var(--on-navy); padding-block: 26px; }
+.band h1 {
+  margin: 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+main.wrap { padding-block: 44px 72px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 40px;
+}
+.card h2 { margin: 0 0 16px; font-size: 1.15em; font-weight: 700; color: var(--head); text-wrap: balance; }
+.lead { margin: 0 0 32px; color: var(--muted); }
+
+label.field { display: block; margin-bottom: 10px; font-weight: 600; }
+input[type="text"] {
+  display: block;
+  width: 100%;
+  margin-bottom: 28px;
+  padding: 14px 18px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 6px;
+}
+input[type="text"]::placeholder { color: var(--muted); opacity: .8; }
+input[type="text"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 14px 34px;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 2px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color .15s;
+}
+.btn:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn:focus-visible { outline: 3px solid var(--head); outline-offset: 3px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Question screen */
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 24px; margin-bottom: 12px; }
+.counter { font-weight: 700; color: var(--head); font-variant-numeric: tabular-nums; }
+.who { font-size: .75em; color: var(--muted); min-width: 0; overflow-wrap: anywhere; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 30px; }
+.bar > span { display: block; height: 100%; width: 0; background: var(--head); transition: width .25s; }
+.question { margin: 0 0 26px; font-size: 1em; font-weight: 600; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+
+.options { display: grid; gap: 12px; }
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 20px;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s;
+}
+.opt:hover:not(:disabled) { border-color: var(--head); background: var(--pick); }
+.opt:focus-visible { outline: 3px solid var(--head); outline-offset: 2px; }
+.opt:disabled { cursor: default; opacity: 1; color: var(--ink); }
+.letter {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  font-weight: 700;
+  color: var(--head);
+  background: var(--pick);
+  border-radius: 4px;
+}
+.txt { min-width: 0; padding-top: 5px; overflow-wrap: anywhere; }
+.tag { display: block; margin-top: 4px; font-size: .65em; font-weight: 600; letter-spacing: .02em; }
+.opt.is-correct { border-color: var(--ok-solid); background: var(--ok-bg); }
+.opt.is-correct .letter { background: var(--ok-solid); color: #fff; }
+.opt.is-correct .tag { color: var(--ok-text); }
+.opt.is-wrong { border-color: var(--bad-solid); background: var(--bad-bg); }
+.opt.is-wrong .letter { background: var(--bad-solid); color: #fff; }
+.opt.is-wrong .tag { color: var(--bad-text); }
+
+.feedback { margin-top: 26px; padding: 18px 22px; border: 2px solid var(--line); border-radius: 6px; }
+.feedback.ok { background: var(--ok-bg); border-color: var(--ok-solid); }
+.feedback.no { background: var(--bad-bg); border-color: var(--bad-solid); }
+.feedback .verdict { margin: 0; font-weight: 700; }
+.feedback.ok .verdict { color: var(--ok-text); }
+.feedback.no .verdict { color: var(--bad-text); }
+.feedback .why { margin: 10px 0 0; overflow-wrap: anywhere; }
+.actions { display: flex; justify-content: flex-end; margin-top: 28px; }
+
+/* Result screen */
+.who-label { margin: 0; font-size: .75em; color: var(--muted); }
+.who-name { margin: 0 0 28px; font-weight: 700; overflow-wrap: anywhere; }
+.score { margin: 0 0 14px; font-size: 1.45em; font-weight: 700; color: var(--head); font-variant-numeric: tabular-nums; }
+.result-bar { height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; margin-bottom: 36px; }
+.result-bar > span { display: block; height: 100%; background: var(--head); }
+
+@media (max-width: 640px) {
+  .card { padding: 22px; }
+  main.wrap { padding-block: 28px 48px; }
+  .opt { padding: 12px 14px; gap: 12px; }
+  .letter { width: 38px; height: 38px; }
+  .actions .btn, #start-form .btn, #restart { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<header class="band">
+  <div class="wrap">
+    <h1>Báo cáo số liệu</h1>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Start screen -->
+  <section class="card" id="screen-start" aria-labelledby="start-title">
+    <h2 id="start-title">Bắt đầu làm bài</h2>
+    <p class="lead">Bài kiểm tra gồm 50 câu trắc nghiệm về cách báo cáo số liệu trong thân bài IELTS Writing Task 1. Thứ tự câu hỏi được sắp xếp ngẫu nhiên mỗi lần làm bài.</p>
+    <form id="start-form" novalidate>
+      <label class="field" for="student-name">Họ và tên</label>
+      <input type="text" id="student-name" name="student-name" placeholder="Nhập họ và tên của bạn" autocomplete="name" maxlength="80">
+      <button type="submit" class="btn" id="start-btn" disabled>Bắt đầu</button>
+    </form>
+  </section>
+
+  <!-- Question screen -->
+  <section class="card" id="screen-quiz" hidden>
+    <div class="meta">
+      <span class="counter" id="counter"></span>
+      <span class="who" id="who"></span>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="bar-fill"></span></div>
+    <h2 class="question" id="question"></h2>
+    <div class="options" id="options" role="group" aria-labelledby="question"></div>
+    <div class="feedback" id="feedback" role="status" hidden></div>
+    <div class="actions">
+      <button type="button" class="btn" id="next-btn" hidden>Câu tiếp theo</button>
+    </div>
+  </section>
+
+  <!-- Result screen -->
+  <section class="card" id="screen-result" aria-labelledby="result-title" hidden>
+    <h2 id="result-title">Kết quả bài làm</h2>
+    <p class="who-label">Học sinh</p>
+    <p class="who-name" id="result-name"></p>
+    <p class="score" id="result-score"></p>
+    <div class="result-bar" aria-hidden="true"><span id="result-fill"></span></div>
+    <button type="button" class="btn" id="restart">Làm lại</button>
+  </section>
+</main>
+
+<script id="quiz-data">
+// Each item: q = question, options = answers in A–D order, correct = index of the right option, explanation = shown after a wrong answer.
+const QUESTIONS = [
+  {
+    "q": "Đối với dạng bài 'Change over time' (biểu đồ động), hai mốc thời gian bắt buộc phải được báo cáo số liệu chi tiết trong thân bài là gì?",
+    "options": [
+      "Điểm cao nhất (Highest) và điểm thấp nhất (Lowest).",
+      "Điểm đầu (Starting point) và điểm cuối (Ending point) của chu kỳ thời gian.",
+      "Điểm giao cắt giữa hai đối tượng và điểm biến động mạnh nhất.",
+      "Mốc năm chẵn đầu tiên và mốc năm chẵn cuối cùng của biểu đồ."
+    ],
+    "correct": 1,
+    "explanation": "Theo mục 2.1 của bài giảng, đối với dạng biểu đồ 'change over time', ĐIỂM ĐẦU và ĐIỂM CUỐI của các đối tượng là hai thông số định lượng bắt buộc phải có để xác định trọn vẹn quỹ đạo phát triển."
+  },
+  {
+    "q": "Khi phân tích các biến động ở khoảng giữa của các mốc thời gian, người viết KHÔNG CẦN ưu tiên báo cáo yếu tố nào sau đây?",
+    "options": [
+      "Điểm đạt cực đại (Highest/Peak) hoặc cực tiểu (Lowest/Trough).",
+      "Sự ổn định kéo dài (Remained unchanged/Plateaued) hoặc biến động lớn (Fluctuations).",
+      "Mọi thay đổi nhỏ lẻ, li ti (minor fluctuations) tăng giảm 1-2% ngắt quãng qua từng năm đơn lẻ.",
+      "Điểm giao thoa hoặc vượt mặt giữa các đối tượng (Intersection / Overtaking)."
+    ],
+    "correct": 2,
+    "explanation": "Ở khoảng giữa chu kỳ, người viết chỉ cần tập trung vào các điểm cực trị (Highest/Lowest), các biến động lớn (Fluctuations/Spikes), sự ổn định hoặc điểm giao cắt, và chủ động bỏ qua các dao động vi mô nhỏ lẻ (minor fluctuations)."
+  },
+  {
+    "q": "Khi đề bài có nhiều đối tượng nghiên cứu (từ 4 - 5 đối tượng), chiến lược phân chia 2 đoạn thân bài tối ưu nhất là gì?",
+    "options": [
+      "Nhóm những đối tượng có xu hướng hoặc tính chất tương đồng vào cùng một đoạn để đối chiếu.",
+      "Chia đôi khoảng thời gian của biểu đồ (Body 1 nửa đầu chu kỳ, Body 2 nửa sau chu kỳ).",
+      "Mỗi đoạn thân bài chỉ viết về 1 đối tượng duy nhất, bỏ qua các đối tượng còn lại.",
+      "Xếp các đối tượng tăng vào Body 1 và không cần viết đoạn Body 2."
+    ],
+    "correct": 0,
+    "explanation": "Khi có từ 4-5 đối tượng, tài liệu nêu rõ nguyên tắc nhóm thông tin: 'Nhóm những đối tượng giống nhau (similar patterns/trends) hoặc đối lập rõ rệt vào từng đoạn' để so sánh thay vì nhảy qua nhảy lại giữa quá nhiều đường."
+  },
+  {
+    "q": "Khi bài thi có ít đối tượng nghiên cứu (từ 3 đối tượng trở xuống), chiến lược chia 2 đoạn thân bài thông dụng và hiệu quả nhất là gì?",
+    "options": [
+      "Mỗi đối tượng viết thành một câu ngắn trong một đoạn duy nhất.",
+      "Chia thân bài theo các giai đoạn thời gian (chia đôi chu kỳ thời gian) và so sánh các đối tượng trong từng giai đoạn.",
+      "Chỉ báo cáo số liệu của đối tượng có giá trị cao nhất và bỏ qua đối tượng thấp nhất.",
+      "Chia theo giá trị số liệu chẵn vào Body 1 và số liệu lẻ vào Body 2."
+    ],
+    "correct": 1,
+    "explanation": "Khi có ít đối tượng (3 trở xuống), bài giảng lưu ý: 'Thân bài chia theo thời gian (thường là chia đôi khoảng thời gian) và so sánh các đối tượng trong từng khoảng thời gian' giúp các câu văn luôn có tính đối chiếu cao."
+  },
+  {
+    "q": "Một trong những lỗi nghiêm trọng nhất ở tiêu chí Task Achievement khiến bài viết bị tụt xuống dưới Band 6.0 là gì?",
+    "options": [
+      "Không sử dụng đủ 10 liên từ nối khác nhau.",
+      "Sử dụng từ vựng quá đơn giản và thông dụng.",
+      "Tập trung quá sâu vào chi tiết vụn vặt, nhìn thấy gì báo cáo nấy mà không có sự chọn lọc điểm nổi bật.",
+      "Viết đoạn thân bài dài hơn 120 từ."
+    ],
+    "correct": 2,
+    "explanation": "Bảng Band Descriptors và mục 'Cần tránh' chỉ rõ: Lỗi 'nhìn thấy gì báo cáo đó, không có sự chọn lọc điểm chính, sa đà vào chi tiết vụn vặt' là nguyên nhân cốt lõi khiến điểm Task Achievement bị giới hạn ở mức Band 5.0."
+  },
+  {
+    "q": "Hành động nào sau đây bị coi là vi phạm nghiêm trọng tính khách quan của bài IELTS Writing Task 1?",
+    "options": [
+      "Lựa chọn các điểm cực đại và cực tiểu để so sánh giữa các đối tượng.",
+      "Đưa nhận định cá nhân hoặc suy diễn nguyên nhân ngoài đời thực để giải thích vì sao số liệu tăng/giảm.",
+      "Sử dụng cấu trúc so sánh hơn và so sánh nhất giữa các nhóm số liệu.",
+      "Nhóm các mốc thời gian có số liệu tương đồng vào cùng một câu văn."
+    ],
+    "correct": 1,
+    "explanation": "Tuyệt đối không đưa nhận định cá nhân hoặc suy diễn nguyên nhân ngoài đời thực để giải thích số liệu tăng giảm vào Task 1; bài viết chỉ thuần túy báo cáo dữ liệu khách quan hiển thị trên đề bài."
+  },
+  {
+    "q": "Tiêu chí Coherence and Cohesion (CC) ở Band 7.0 yêu cầu các ý trong thân bài phải được sắp xếp như thế nào?",
+    "options": [
+      "Liệt kê số liệu ngẫu nhiên theo thứ tự xuất hiện từ trái qua phải của biểu đồ.",
+      "Chỉ dùng một loại cấu trúc câu duy nhất để người đọc dễ theo dõi.",
+      "Thông tin được sắp xếp logic, mạch lạc, có sự tiến triển ý rõ ràng và sử dụng linh hoạt các phương tiện liên kết.",
+      "Bắt buộc mọi câu văn đều phải có từ 25 từ trở lên."
+    ],
+    "correct": 2,
+    "explanation": "Tiêu chí CC Band 7.0 yêu cầu: 'Information and ideas are logically organised and there is a clear progression throughout... Uses a range of cohesive devices appropriately'."
+  },
+  {
+    "q": "Khi phân tích một đề bài Dynamic Chart có nhiều đối tượng (từ 4 đến 5 đường), cơ sở logic nhất để nhóm các đối tượng vào cùng một đoạn thân bài (Body paragraph) là gì?",
+    "options": [
+      "Gom các đối tượng có tên bắt đầu bằng cùng một chữ cái trong bảng chữ cái tiếng Anh.",
+      "Gom các đối tượng có xu hướng biến động tương đồng (cùng tăng, cùng giảm hoặc cùng biên độ dao động) để dễ dàng đối chiếu, so sánh.",
+      "Luôn luôn chia đôi ngẫu nhiên: 2 đối tượng đầu vào Body 1, các đối tượng còn lại vào Body 2 bất kể xu hướng.",
+      "Xếp tất cả các đối tượng có số liệu lẻ vào Body 1, các đối tượng có số liệu chẵn vào Body 2."
+    ],
+    "correct": 1,
+    "explanation": "Trong bài thi Task 1, khi có nhiều đối tượng (4-5 đường), việc nhóm các đối tượng có đặc điểm/xu hướng tương đồng (similar patterns) hoặc đối lập rõ rệt vào cùng một đoạn thân bài là chiến lược tối ưu giúp bài viết mạch lạc và dễ so sánh."
+  },
+  {
+    "q": "Khi lựa chọn các đặc điểm chính ở khoảng giữa chu kỳ (in-between features), người viết nên BỎ QUA yếu tố nào sau đây để tránh bài viết bị sa đà vào chi tiết vụn vặt?",
+    "options": [
+      "Điểm đạt cực đại (peak) hoặc cực tiểu (trough) của đối tượng qua các năm.",
+      "Mốc thời gian diễn ra sự giao cắt và hoán đổi vị trí thứ hạng giữa các đối tượng (overtaking).",
+      "Những dao động vi mô nhỏ lẻ (minor fluctuations) tăng giảm không đáng kể 1 - 2% trong từng năm đơn lẻ.",
+      "Giai đoạn duy trì số liệu hoàn toàn ổn định (plateaued / remained constant) kéo dài qua nhiều năm."
+    ],
+    "correct": 2,
+    "explanation": "Theo tiêu chuẩn chấm điểm Task Achievement Band 7.0+, thí sinh cần chắt lọc các điểm nổi bật (cực trị, điểm giao cắt, sự ổn định nổi bật) và chủ động bỏ qua các dao động vi mô nhỏ lẻ (minor fluctuations) để bài viết không biến thành bản liệt kê số liệu vụn vặt."
+  },
+  {
+    "q": "Theo thang điểm Band Descriptors của Task Achievement, bài viết Band 7.0 cần đáp ứng yếu tố nào về mặt số liệu?",
+    "options": [
+      "Báo cáo chính xác 100% mọi số liệu có trên trục tọa độ.",
+      "Các đặc điểm chính (key features) được chọn lọc và làm nổi bật rõ ràng, số liệu đưa vào phù hợp và đầy đủ để làm bằng chứng.",
+      "Ước lượng số liệu tự do mà không cần bám sát trục số liệu thực tế.",
+      "Chỉ đưa số liệu phần trăm, tuyệt đối không đưa số liệu tuyệt đối."
+    ],
+    "correct": 1,
+    "explanation": "Band 7.0 TA yêu cầu: 'Key features which are selected are covered and clearly highlighted... Information is suitably supported by data'."
+  },
+  {
+    "q": "Khi báo cáo một chuỗi các năm liên tiếp biến động, việc lặp đi lặp lại cấu trúc 'In 1990,... In 1995,... In 2000,...' bị đánh giá là gì?",
+    "options": [
+      "Thể hiện văn phong mạch lạc và nhất quán cao độ.",
+      "Lỗi sử dụng phương tiện liên kết máy móc (mechanical cohesive devices), làm giảm điểm CC.",
+      "Cách duy nhất để giám khảo hiểu đúng trình tự thời gian.",
+      "Được khuyến khích dùng ở tiêu chuẩn Band 8.0."
+    ],
+    "correct": 1,
+    "explanation": "Lặp cấu trúc thời gian máy móc thể hiện sự thiếu linh hoạt trong phương tiện liên kết (faulty/mechanical cohesive devices), làm bài viết đơn điệu và bị trừ điểm tiêu chí CC."
+  },
+  {
+    "q": "Mục đích cốt lõi của việc chọn lọc 'Main features' thay vì báo cáo toàn bộ dữ liệu là gì?",
+    "options": [
+      "Để bài viết thật ngắn và hoàn thành trong thời gian dưới 10 phút.",
+      "Tổng hợp và truyền tải những thông tin cốt lõi nhất của bức tranh dữ liệu, thể hiện năng lực phân tích và xử lý thông tin học thuật.",
+      "Giúp người viết không cần học từ vựng về số liệu.",
+      "Tránh việc phải viết quá 100 từ cho toàn bài."
+    ],
+    "correct": 1,
+    "explanation": "Mục đích của việc chọn lọc là làm nổi bật bản chất của dữ liệu, không biến bài viết thành một bản sao chép số liệu đơn thuần mà thể hiện năng lực tổng hợp và đánh giá thông tin khoa học."
+  },
+  {
+    "q": "Ở các band điểm từ 5.0 trở xuống, thí sinh thường có xu hướng tập trung quá sâu vào chi tiết vụn vặt mà bỏ qua bức tranh tổng thể (focus on details without referring to the bigger picture).",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 0,
+    "explanation": "Đúng theo Band Descriptors Band 5: 'There may be a tendency to focus on details (without referring to the bigger picture)'."
+  },
+  {
+    "q": "Trong thân bài, thí sinh có thể thoải mái viết dự đoán cá nhân về lý do kinh tế khiến một đối tượng giảm mạnh mà không bị trừ điểm Task Achievement.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 1,
+    "explanation": "Sai. Task 1 chỉ thuần túy báo cáo dữ liệu khách quan, việc đưa lý do ngoài đời thực sẽ bị trừ điểm tiêu chí Task Achievement."
+  },
+  {
+    "q": "Với dạng bài có từ 4 đến 5 đường biểu đồ, việc chia 2 đoạn thân bài theo đối tượng tương đồng sẽ giúp bài viết mạch lạc hơn so với việc chia mốc thời gian rồi nhảy qua nhảy lại giữa 5 đối tượng.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 0,
+    "explanation": "Đúng theo nguyên tắc tổ chức thân bài khi có 4-5 đối tượng trong bài giảng: nhóm các đường có chung xu hướng tăng/giảm giúp bài viết tập trung và mạch lạc."
+  },
+  {
+    "q": "Điểm đầu và điểm cuối là hai điểm số liệu có thể tùy ý bỏ qua nếu các điểm ở giữa chu kỳ biến động quá mạnh mẽ.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 1,
+    "explanation": "Sai. Điểm đầu và điểm cuối là xương sống để định hình xu hướng của từng đối tượng, bỏ qua sẽ khiến bài viết thiếu cơ sở dữ liệu quan trọng."
+  },
+  {
+    "q": "Sử dụng các từ thay thế (referencing & substitution) như 'this figure', 'the former', 'the latter', 'it' giúp cải thiện điểm tiêu chí Coherence & Cohesion.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 0,
+    "explanation": "Đúng. Sử dụng linh hoạt các phép thay thế và quy chiếu (referencing and substitution) là yêu cầu trọng tâm của tiêu chí CC Band 7.0 để tránh lặp từ và nối mạch văn trơn tru."
+  },
+  {
+    "q": "Trong bài thi Task 1, thí sinh chỉ được phép sử dụng thì Quá khứ đơn (Past Simple) cho toàn bộ bài viết, ngay cả khi biểu đồ chứa các mốc năm 2040, 2060.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 1,
+    "explanation": "Sai. Với các mốc năm trong tương lai (ví dụ: 2030, 2040), bắt buộc phải sử dụng các cấu trúc dự đoán tương lai (Future predictions) như 'is predicted/projected to...'."
+  },
+  {
+    "q": "Cụm từ 'remained stable at' hoặc 'plateaued at' được sử dụng để miêu tả một giai đoạn mà số liệu đối tượng hầu như không có sự thay đổi đáng kể.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 0,
+    "explanation": "Đúng theo bảng Vocab Booster cho nhóm 'Position / No change'."
+  },
+  {
+    "q": "Nếu hai đối tượng có xu hướng giao nhau hoặc đối tượng này vượt qua đối tượng kia, đây là một điểm nổi bật (highlight) rất quan trọng cần báo cáo trong thân bài.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 0,
+    "explanation": "Đúng. Mốc giao nhau (surpassed / overtaken) là một trong những điểm nổi bật (highlight) quan trọng nhất minh chứng cho sự hoán đổi thứ hạng."
+  },
+  {
+    "q": "Để đạt điểm cao tiêu chí Lexical Resource, thí sinh nên sử dụng liên tục từ 'dramatically' cho mọi sự thay đổi tăng giảm trong bài.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 1,
+    "explanation": "Sai. Lạm dụng từ cường điệu làm giảm tính chính xác học thuật và vi phạm tiêu chí Lexical Resource vì không phản ánh đúng biên độ thực tế của dữ liệu."
+  },
+  {
+    "q": "Một đoạn thân bài đạt chuẩn Band 7.0 cần có sự kết hợp hài hòa giữa việc chỉ ra xu hướng biến động và việc đưa số liệu thực tế làm bằng chứng chứng minh.",
+    "options": [
+      "True (Đúng)",
+      "False (Sai)"
+    ],
+    "correct": 0,
+    "explanation": "Đúng. Thân bài chuẩn mực luôn bao gồm câu nêu xu hướng đi kèm số liệu cụ thể làm bằng chứng."
+  },
+  {
+    "q": "Khi số liệu của một đối tượng tăng vọt với tốc độ rất nhanh và biên độ cực lớn, động từ nào sau đây mang sắc thái mạnh mẽ nhất?",
+    "options": [
+      "Climbed steadily",
+      "Rocketed",
+      "Crept up",
+      "Leveled off"
+    ],
+    "correct": 1,
+    "explanation": "'Rocketed' thể hiện mức tăng vọt cực kỳ mạnh và nhanh nhất trong bảng từ vựng xu hướng."
+  },
+  {
+    "q": "Để miêu tả một sự sụt giảm nhẹ, không đáng kể qua các năm, tính từ phù hợp nhất là:",
+    "options": [
+      "Considerable",
+      "Substantial",
+      "Negligible",
+      "Remarkable"
+    ],
+    "correct": 2,
+    "explanation": "'Negligible' mang nghĩa rất nhỏ, không đáng kể (Very small change)."
+  },
+  {
+    "q": "Hoàn thành câu miêu tả số liệu: 'The proportion of national budget spent on transport ______ at 22% in 1990.'",
+    "options": [
+      "stood",
+      "standing",
+      "stands",
+      "was stood"
+    ],
+    "correct": 0,
+    "explanation": "Cụm chuẩn vị trí xuất phát: 'stood at 22%' (đứng tại mức 22% trong quá khứ)."
+  },
+  {
+    "q": "Chọn liên từ thời gian thích hợp: 'The figure rose steadily to 40%, ______ it remained constant for the next 5 years.'",
+    "options": [
+      "after which",
+      "where",
+      "which after",
+      "that"
+    ],
+    "correct": 0,
+    "explanation": "Mệnh đề quan hệ chỉ sự tiếp nối thời gian: '..., after which it remained constant...' (sau đó nó duy trì ổn định)."
+  },
+  {
+    "q": "Cụm từ Pro tương đương với 'twice as high' để chỉ số liệu gấp đôi là:",
+    "options": [
+      "Halved the figure for",
+      "Equal to",
+      "Doubled the figure for",
+      "Triple of"
+    ],
+    "correct": 2,
+    "explanation": "Bảng Grammar Doping nêu rõ: 'Twice as high' được nâng cấp thành 'Doubled the figure for' hoặc 'Nearly doubled...'."
+  },
+  {
+    "q": "Khi một đối tượng giảm xuống vị trí thấp nhất trên biểu đồ, cụm từ chính xác là:",
+    "options": [
+      "Reached a low of",
+      "Hit a peak of",
+      "Peaked at",
+      "Stood at the top of"
+    ],
+    "correct": 0,
+    "explanation": "'Reached a low of' được dùng để miêu tả việc chạm mức đáy thấp nhất."
+  },
+  {
+    "q": "Từ chỉ mức độ thay đổi 'Extensive change' (thay đổi đáng kể) thuộc nhóm từ:",
+    "options": [
+      "Slight / Marginal",
+      "Negligible / Fractional",
+      "Moderate / Modest",
+      "Dramatic / Considerable / Substantial"
+    ],
+    "correct": 3,
+    "explanation": "'Considerable' nằm trong nhóm từ chỉ mức độ thay đổi lớn (Extensive change) cùng với dramatic, substantial, significant."
+  },
+  {
+    "q": "Điền giới từ chỉ mốc đến của số liệu: 'The average spending on mobile services surged ______ nearly $750 in 2010.'",
+    "options": [
+      "at",
+      "to",
+      "by",
+      "with"
+    ],
+    "correct": 1,
+    "explanation": "Giới từ 'to' chỉ mốc số liệu đạt tới (surged to nearly $750)."
+  },
+  {
+    "q": "Cụm từ nâng cao để thay thế cho 'decreased the most' trong bảng Grammar Doping là:",
+    "options": [
+      "Saw the sharpest rise",
+      "Lagged behind",
+      "Underwent the most dramatic decline",
+      "Accounted for the majority"
+    ],
+    "correct": 2,
+    "explanation": "'Decreased the most' Pro tương ứng là 'Underwent the most dramatic decline'."
+  },
+  {
+    "q": "Khi muốn liên kết mốc kết thúc của chu kỳ trong câu báo cáo, cấu trúc chuẩn trong tài liệu là: '..., before ______ the period at 20%.'",
+    "options": [
+      "ending",
+      "ended",
+      "to end",
+      "end"
+    ],
+    "correct": 0,
+    "explanation": "Sau giới từ 'before', động từ chia dạng V-ing: 'before ending the period at 20%'."
+  },
+  {
+    "q": "Nếu một xu hướng bắt đầu từ năm 1990 kéo dài đến nay và mốc thời gian dừng lại ở năm hiện tại, ta kết hợp thì như thế nào?",
+    "options": [
+      "Dùng thì Past Simple cho toàn bộ.",
+      "Dùng Past Simple cho mốc xuất phát và Present Perfect (Hiện tại hoàn thành) cho quá trình kéo dài đến nay.",
+      "Dùng thì Tương lai đơn.",
+      "Dùng thì Hiện tại tiếp diễn."
+    ],
+    "correct": 1,
+    "explanation": "Theo phần Grammar booster, xu hướng bắt đầu trong quá khứ kéo dài đến hiện tại dùng Present Perfect (Hiện tại hoàn thành) để diễn tả quá trình tính đến thời điểm hiện tại."
+  },
+  {
+    "q": "Đâu là cấu trúc dự đoán tương lai (Future prediction - Structure 3) hoàn toàn chính xác theo tài liệu?",
+    "options": [
+      "Subject + will be predicted + that S + V.",
+      "Subject + be + predicted/expected/forecast + to + V-infinitive.",
+      "It is forecast + to + V-infinitive.",
+      "Subject + predict + will + V."
+    ],
+    "correct": 1,
+    "explanation": "Structure 3 chuẩn: 'Subject + be + predicted/expected/anticipated + to V' (ví dụ: Gold prices are predicted to rise)."
+  },
+  {
+    "q": "Trong Structure 1 về dự đoán tương lai: '[N] + show/reveal/indicate + [that]...', danh từ nào sau đây KHÔNG thuộc nhóm danh từ dự đoán?",
+    "options": [
+      "Projections / Predictions",
+      "Estimates / Forecasts",
+      "Recollections / Nostalgia",
+      "Expectations / Anticipations"
+    ],
+    "correct": 2,
+    "explanation": "'Recollections / Nostalgia' mang nghĩa hồi tưởng quá khứ, không dùng cho dự đoán tương lai."
+  },
+  {
+    "q": "Khi muốn nói một đối tượng 'chiếm phần lớn nhất / áp đảo' thay vì dùng từ 'highest', cấu trúc Pro tương ứng là:",
+    "options": [
+      "Was on par with",
+      "Dominated / Accounted for the lion's share",
+      "Lagged behind",
+      "Experienced a minimal variation"
+    ],
+    "correct": 1,
+    "explanation": "'Highest' được nâng cấp thành 'Accounted for the lion's share' hoặc 'Dominated'."
+  },
+  {
+    "q": "Phân biệt cách dùng giới từ: 'The figure rose ______ 10%' (tăng thêm 10%) và 'rose ______ 50%' (tăng tới mốc 50%). Cặp giới từ đúng là:",
+    "options": [
+      "to / by",
+      "by / to",
+      "at / with",
+      "with / at"
+    ],
+    "correct": 1,
+    "explanation": "'Rose by 10%' (tăng một lượng biên độ là 10%), 'rose to 50%' (tăng tới mốc giá trị 50%)."
+  },
+  {
+    "q": "Xác định câu viết đúng ngữ pháp về thì tương lai trong Task 1:",
+    "options": [
+      "The proportion of solar energy will certainly grow up to 90% without any doubt.",
+      "It is projected that the proportion of solar energy will rise to around 80% by 2040.",
+      "Solar energy was predicted will reach 80% in 2040.",
+      "Predictions show that solar energy is rising at 80% in 2040."
+    ],
+    "correct": 1,
+    "explanation": "Cấu trúc Structure 2 chuẩn: 'It is projected that + S + will rise to around 80% by 2040'."
+  },
+  {
+    "q": "Cụm từ nào sau đây đồng nghĩa với 'on par with' trong văn cảnh so sánh số liệu Task 1?",
+    "options": [
+      "Far below",
+      "Much higher than",
+      "Equal to / At the same level as",
+      "Outpacing"
+    ],
+    "correct": 2,
+    "explanation": "'On par with' có nghĩa tương đương với 'Equal to / At the same level as' (ngang hàng, bằng mức với)."
+  },
+  {
+    "q": "Để miêu tả đối tượng tụt lại phía sau so với các đối tượng khác, cụm từ học thuật nào được dùng?",
+    "options": [
+      "Lagged behind",
+      "Outpaced",
+      "Surpassed",
+      "Dominated"
+    ],
+    "correct": 0,
+    "explanation": "'Lagged behind' diễn tả việc tụt hậu, xếp sau các đối tượng khác."
+  },
+  {
+    "q": "Cụm từ Pro 'Saw the sharpest rise / Outpaced all other categories in growth' được dùng để nâng cấp cho diễn đạt cơ bản nào?",
+    "options": [
+      "Lowest",
+      "Increased the most",
+      "Remained stable",
+      "Fluctuated mildly"
+    ],
+    "correct": 1,
+    "explanation": "Diễn tả việc tăng nhiều nhất, tăng mạnh nhất so với toàn bộ các nhóm khác trong bảng Grammar Doping."
+  },
+  {
+    "q": "Cấu trúc báo cáo: '0.4 million students studied abroad in 1970, with a subsequent considerable rise to 1.4 million and a ______ drop to 0.8 million.' Từ thích hợp điền vào chỗ trống là:",
+    "options": [
+      "finally",
+      "final",
+      "finalize",
+      "finality"
+    ],
+    "correct": 1,
+    "explanation": "Cần một tính từ bổ nghĩa cho danh từ 'drop': '...and a final drop to 0.8 million'."
+  },
+  {
+    "q": "Xét câu báo cáo số liệu sau:\n'In 2006, the number of mobile phone users experienced a surge, surpassed landlines at 50 million.'\nCâu trên mắc lỗi ngữ pháp nào và cách khắc phục nào sau đây là CHUẨN XÁC nhất?",
+    "options": [
+      "Lỗi chia thì: cần đổi 'experienced' thành thì quá khứ tiếp diễn 'was experiencing'.",
+      "Lỗi nối vị ngữ (comma splice): hai động từ vị ngữ 'experienced' và 'surpassed' nối với nhau chỉ bằng dấu phẩy; cần sửa thành mệnh đề phân từ ', surpassing landlines at 50 million' hoặc thêm liên từ ', and surpassed landlines at 50 million'.",
+      "Lỗi giới từ: bắt buộc phải đổi 'at 50 million' thành 'by 50 million'.",
+      "Lỗi từ vựng: không được dùng danh từ 'surge' đi kèm động từ 'experienced' trong văn phong học thuật."
+    ],
+    "correct": 1,
+    "explanation": "Hai mệnh đề có động từ chia quá khứ ('experienced' và 'surpassed') không thể ghép với nhau chỉ bằng dấu phẩy mà không có liên từ. Để đạt điểm cao tiêu chí GRA, cách sửa tối ưu là rút gọn mệnh đề thứ hai thành cụm phân từ hiện tại ', surpassing landlines at 50 million' hoặc thêm liên từ ', and surpassed landlines at 50 million'."
+  },
+  {
+    "q": "Cho dữ liệu tình huống sau: 'Năm 2000, tỷ lệ người sử dụng Dịch vụ X đạt 60% rồi tăng liên tục lên 85% vào năm 2010. Ngược lại, tỷ lệ sử dụng Dịch vụ Y giảm mạnh từ 50% xuống chỉ còn 15% trong cùng kỳ.'\nCâu văn nào sau đây kết hợp và báo cáo hai dữ liệu trên một cách MẠCH LẠC và ĐẠT CHUẨN Band 7.0+ nhất?",
+    "options": [
+      "Service X was 60% in 2000 and grew to 85% in 2010, but Service Y dropped from 50% to 15%.",
+      "Service X increased from 60% to 85% between 2000 and 2010, because Service Y declined to 15%.",
+      "While the proportion of Service X users grew steadily from 60% to 85% between 2000 and 2010, the figure for Service Y witnessed a steep plunge from 50% to merely 15%.",
+      "In 2000, Service X was 60% and Service Y was 50%, then in 2010 Service X became 85% and Service Y became 15%."
+    ],
+    "correct": 2,
+    "explanation": "Câu C sử dụng liên từ tương phản phức 'While...', danh từ chỉ đối tượng chuẩn xác ('the proportion of...', 'the figure for...'), động từ và danh từ xu hướng nâng cao ('grew steadily', 'witnessed a steep plunge to merely 15%'), thể hiện cấu trúc ngữ pháp phức tạp và từ vựng phong phú chuẩn Band 7.0+."
+  },
+  {
+    "q": "Sắp xếp các cụm từ sau thành một câu báo cáo số liệu hoàn chỉnh, mạch lạc và đúng chuẩn ngữ pháp Task 1:\n(1) after which it saw a progressive decrease\n(2) to exactly 20% in 2005\n(3) started at about 27% in 1990\n(4) The share of the government’s budget spent on roads\nThứ tự sắp xếp đúng là:",
+    "options": [
+      "(4) - (3) - (1) - (2)",
+      "(4) - (1) - (3) - (2)",
+      "(3) - (4) - (2) - (1)",
+      "(1) - (2) - (4) - (3)"
+    ],
+    "correct": 0,
+    "explanation": "Thứ tự tạo thành câu hoàn chỉnh: (4) Chủ ngữ -> (3) Động từ và điểm xuất phát -> (1) Mệnh đề quan hệ chỉ biến động tiếp theo -> (2) Giới từ chỉ mốc đích và năm kết thúc. Câu hoàn chỉnh: 'The share of the government’s budget spent on roads started at about 27% in 1990, after which it saw a progressive decrease to exactly 20% in 2005.'"
+  },
+  {
+    "q": "Sắp xếp các mệnh đề sau thành câu báo cáo so sánh đối lập giữa hai đối tượng A và B:\n(1) despite a small fall in the first 5 years\n(2) rose from just over 10% in 1990 to 15% in 2005\n(3) Conversely, the figure for Country B\nThứ tự sắp xếp đúng là:",
+    "options": [
+      "(1) - (3) - (2)",
+      "(3) - (1) - (2)",
+      "(3) - (2) - (1)",
+      "(2) - (3) - (1)"
+    ],
+    "correct": 1,
+    "explanation": "Thứ tự câu hoàn chỉnh: (3) Liên từ và Chủ ngữ -> (1) Nhượng bộ ngắn hạn chèn giữa -> (2) Động từ và sự tăng trưởng. Câu hoàn chỉnh: 'Conversely, the figure for Country B, despite a small fall in the first 5 years, rose from just over 10% in 1990 to 15% in 2005.'"
+  },
+  {
+    "q": "Khi một đề bài dạng Dynamic Chart chỉ có từ 2 đến 3 đối tượng nhưng chu kỳ thời gian kéo dài qua nhiều mốc (ví dụ: 1990, 1995, 2000, 2005, 2010), vì sao chiến lược chia 2 đoạn thân bài theo các giai đoạn thời gian (Time periods) thường là lựa chọn tối ưu?",
+    "options": [
+      "Vì cách chia này giúp người viết dễ dàng so sánh vị thế và thứ hạng giữa các đối tượng trong từng khoảng thời gian, tránh việc mỗi đoạn chỉ viết về một đối tượng đơn độc mà thiếu đi sự đối chiếu.",
+      "Vì giám khảo quy định bài viết có từ 2-3 đối tượng không được phép viết tên đối tượng vào bài.",
+      "Vì số liệu của tất cả các đối tượng luôn bằng nhau ở điểm xuất phát.",
+      "Vì cách chia này cho phép người viết bỏ qua điểm kết thúc của chu kỳ mà không bị trừ điểm Task Achievement."
+    ],
+    "correct": 0,
+    "explanation": "Khi có ít đối tượng (2-3 đối tượng), nếu chia mỗi đoạn là 1 đối tượng thì bài viết sẽ thành những khối mô tả rời rạc (lỗi lack of comparison). Chia theo các giai đoạn thời gian (chronological division) buộc người viết phải so sánh, đối chiếu trực tiếp các đối tượng với nhau trong từng mốc thời gian, đáp ứng hoàn hảo tiêu chí Task Achievement."
+  },
+  {
+    "q": "Sắp xếp các cụm từ sau thành câu báo cáo số liệu hoàn chỉnh, sử dụng mệnh đề phân từ rút gọn (V-ing) để miêu tả sự vượt mặt các đối tượng khác:\n(1) before ending the period at nearly $750\n(2) The average yearly spending on mobile lines started at $200 in 2001\n(3) surpassing international and national landlines in 2003 and 2006, respectively\n(4) after which it experienced a dramatic rise\nThứ tự sắp xếp đúng là:",
+    "options": [
+      "(2) - (4) - (3) - (1)",
+      "(2) - (3) - (1) - (4)",
+      "(4) - (2) - (3) - (1)",
+      "(2) - (1) - (4) - (3)"
+    ],
+    "correct": 0,
+    "explanation": "Thứ tự logic: (2) Nêu xuất phát điểm -> (4) Xu hướng tăng mạnh tiếp theo -> (3) Mệnh đề phân từ chỉ việc vượt mặt các đối tượng khác -> (1) Cụm giới từ chỉ kết thúc chu kỳ. Câu hoàn chỉnh: 'The average yearly spending on mobile lines started at $200 in 2001, after which it experienced a dramatic rise, surpassing international and national landlines in 2003 and 2006, respectively, before ending the period at nearly $750.'"
+  },
+  {
+    "q": "Đâu là cách kết hợp từ (collocation) và ngữ pháp CHÍNH XÁC khi miêu tả xu hướng tương đồng giữa hai đối tượng kết hợp mệnh đề phân từ hiện tại (present participle clause)?",
+    "options": [
+      "The figure for car ownership saw similar changes, rising steadily from 40% to 65%.",
+      "The figure for car ownership saw similar changes, rose steadily from 40% to 65%.",
+      "The figure for car ownership seen similar changes, rising steadily from 40% to 65%.",
+      "The figure for car ownership saw similar changes, to rising steadily from 40% to 65%."
+    ],
+    "correct": 0,
+    "explanation": "Cấu trúc phân từ hiện tại rút gọn mệnh đề quan hệ 'saw similar changes, rising steadily from 40% to 65%' đảm bảo đúng ngữ pháp câu phức và phong cách học thuật cao cấp."
+  },
+  {
+    "q": "Khi gặp biểu đồ có đường dữ liệu tổng cộng (Total figure) bên cạnh các hạng mục thành phần, chiến lược báo cáo nào sau đây là thông minh và khoa học nhất?",
+    "options": [
+      "Liệt kê lại tất cả các số liệu của đường Total ở từng năm một rồi mới viết đến các hạng mục thành phần.",
+      "Sử dụng đường Total làm bức tranh vĩ mô trong Overview hoặc dùng làm mốc so sánh tỷ trọng chi phối trong thân bài, tránh lặp lại toàn bộ các con số chi tiết của đường Total.",
+      "Bỏ qua hoàn toàn đường Total và không nhắc đến chữ Total nào trong toàn bộ bài viết.",
+      "Viết riêng một đoạn thân bài dài 100 từ chỉ để diễn giải nguyên nhân tại sao đường Total lại cao hơn các đường khác."
+    ],
+    "correct": 1,
+    "explanation": "Số liệu tổng là chỉ số quy chiếu vĩ mô quan trọng, đưa vào overview hoặc dùng làm mốc so sánh tỷ trọng chi phối trong thân bài, tránh lặp lại toàn bộ các con số chi tiết của đường Total."
+  }
+];
+</script>
+
+<script>
+(function () {
+  var LETTERS = ["A", "B", "C", "D"];
+  var $ = function (id) { return document.getElementById(id); };
+
+  var screens = { start: $("screen-start"), quiz: $("screen-quiz"), result: $("screen-result") };
+  var nameInput = $("student-name");
+  var startBtn = $("start-btn");
+  var nextBtn = $("next-btn");
+  var feedback = $("feedback");
+  var optionsBox = $("options");
+
+  var order = [];       // shuffled indices into QUESTIONS
+  var pos = 0;          // position in the shuffled order
+  var score = 0;
+  var answered = false;
+  var studentName = "";
+
+  // Fisher–Yates shuffle (returns a new array)
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function newRound() {
+    order = shuffle(QUESTIONS.map(function (_, i) { return i; }));
+    pos = 0;
+    score = 0;
+    answered = false;
+  }
+
+  function show(name) {
+    Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== name); });
+    window.scrollTo(0, 0);
+  }
+
+  function syncStartButton() {
+    startBtn.disabled = nameInput.value.trim().length === 0;
+  }
+
+  function setBar(done) {
+    $("bar-fill").style.width = (done / QUESTIONS.length * 100) + "%";
+  }
+
+  function renderQuestion() {
+    var item = QUESTIONS[order[pos]];
+    answered = false;
+
+    $("counter").textContent = "Câu " + (pos + 1) + " / " + QUESTIONS.length;
+    $("who").textContent = studentName;
+    $("question").textContent = item.q;
+    setBar(pos);
+
+    optionsBox.textContent = "";
+    item.options.forEach(function (text, i) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt";
+
+      var letter = document.createElement("span");
+      letter.className = "letter";
+      letter.textContent = LETTERS[i];
+
+      var txt = document.createElement("span");
+      txt.className = "txt";
+      txt.appendChild(document.createTextNode(text));
+
+      btn.appendChild(letter);
+      btn.appendChild(txt);
+      btn.addEventListener("click", function () { choose(i); });
+      optionsBox.appendChild(btn);
+    });
+
+    feedback.hidden = true;
+    feedback.textContent = "";
+    feedback.className = "feedback";
+    nextBtn.hidden = true;
+    nextBtn.textContent = (pos === QUESTIONS.length - 1) ? "Xem kết quả" : "Câu tiếp theo";
+  }
+
+  function addTag(btn, label) {
+    var tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = label;
+    btn.querySelector(".txt").appendChild(tag);
+  }
+
+  function choose(i) {
+    if (answered) return;
+    answered = true;
+
+    var item = QUESTIONS[order[pos]];
+    var buttons = optionsBox.querySelectorAll(".opt");
+    var isRight = (i === item.correct);
+
+    buttons.forEach(function (b) { b.disabled = true; });
+    setBar(pos + 1);
+
+    var verdict = document.createElement("p");
+    verdict.className = "verdict";
+
+    if (isRight) {
+      score++;
+      buttons[i].classList.add("is-correct");
+      addTag(buttons[i], "Đáp án đúng");
+      feedback.className = "feedback ok";
+      verdict.textContent = "Chính xác! Chúc mừng bạn!";
+      feedback.appendChild(verdict);
+    } else {
+      buttons[i].classList.add("is-wrong");
+      addTag(buttons[i], "Bạn đã chọn");
+      buttons[item.correct].classList.add("is-correct");
+      addTag(buttons[item.correct], "Đáp án đúng");
+      feedback.className = "feedback no";
+      verdict.textContent = "Chưa đúng. Đáp án đúng là " + LETTERS[item.correct] + ".";
+      var why = document.createElement("p");
+      why.className = "why";
+      why.textContent = item.explanation;
+      feedback.appendChild(verdict);
+      feedback.appendChild(why);
+    }
+
+    feedback.hidden = false;
+    nextBtn.hidden = false;
+    nextBtn.focus();
+  }
+
+  function showResult() {
+    $("result-name").textContent = studentName;
+    $("result-score").textContent = "Số câu đúng: " + score + " / " + QUESTIONS.length;
+    $("result-fill").style.width = (score / QUESTIONS.length * 100) + "%";
+    show("result");
+  }
+
+  $("start-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var value = nameInput.value.trim();
+    if (!value) return;
+    studentName = value;
+    renderQuestion();
+    show("quiz");
+  });
+
+  nameInput.addEventListener("input", syncStartButton);
+
+  nextBtn.addEventListener("click", function () {
+    pos++;
+    if (pos >= QUESTIONS.length) {
+      showResult();
+    } else {
+      renderQuestion();
+      window.scrollTo(0, 0);
+    }
+  });
+
+  $("restart").addEventListener("click", function () {
+    newRound();
+    syncStartButton();
+    show("start");
+    nameInput.focus();
+  });
+
+  newRound();
+  syncStartButton();
+})();
+</script>
+
+</body></html>
