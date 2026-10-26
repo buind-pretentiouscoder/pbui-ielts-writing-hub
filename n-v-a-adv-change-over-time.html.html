@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Từ vựng miêu tả sự biến động của số liệu qua thời gian</title>
+    <style>
+        /* Modern Design Tokens & Base Setup */
+        :root {
+            --primary-blue: #0B2A5B;
+            --primary-hover: #153E7E;
+            --bg-light: #F4F6F9;
+            --card-bg: #FFFFFF;
+            --text-dark: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #CBD5E1;
+            
+            --success-color: #15803D;
+            --success-bg: #DCFCE7;
+            --success-border: #86EFAC;
+            
+            --error-color: #B91C1C;
+            --error-bg: #FEE2E2;
+            --error-border: #FCA5A5;
+            
+            --font-base: 23px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            font-size: var(--font-base);
+            line-height: 1.5;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Container Layout */
+        .quiz-container {
+            width: 100%;
+            max-width: 860px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(11, 42, 91, 0.08), 0 8px 10px -6px rgba(11, 42, 91, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            margin: auto;
+        }
+
+        /* Typography & Header */
+        h1.app-title {
+            color: var(--primary-blue);
+            font-size: 1.35em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Start Screen */
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: var(--font-base);
+            font-family: inherit;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s ease;
+            background-color: #FAFAFA;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-blue);
+            background-color: #FFFFFF;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 18px 24px;
+            font-size: var(--font-base);
+            font-weight: 600;
+            font-family: inherit;
+            color: #FFFFFF;
+            background-color: var(--primary-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s ease;
+            text-align: center;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Progress Bar */
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: #E2E8F0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-blue);
+            transition: width 0.3s ease;
+        }
+
+        /* Question Box */
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 28px;
+            white-space: pre-line;
+            color: var(--text-dark);
+        }
+
+        /* Option Cards */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .option-card {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 18px 20px;
+            background-color: #FFFFFF;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: var(--font-base);
+            font-family: inherit;
+            color: var(--text-dark);
+            width: 100%;
+        }
+
+        .option-card:hover:not(.disabled) {
+            border-color: var(--primary-blue);
+            background-color: #F8FAFC;
+        }
+
+        .option-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .option-label-prefix {
+            font-weight: 700;
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .option-text-val {
+            flex: 1;
+            white-space: pre-line;
+        }
+
+        .option-tag {
+            font-size: 0.75em;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-left: 12px;
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        /* Option States */
+        .option-card.disabled {
+            cursor: default;
+        }
+
+        .option-card.correct {
+            background-color: var(--success-bg) !important;
+            border-color: var(--success-color) !important;
+            color: #064E3B !important;
+        }
+
+        .option-card.correct .option-label-prefix {
+            color: var(--success-color);
+        }
+
+        .option-card.correct .option-tag {
+            background-color: var(--success-color);
+            color: #FFFFFF;
+        }
+
+        .option-card.incorrect {
+            background-color: var(--error-bg) !important;
+            border-color: var(--error-color) !important;
+            color: #7F1D1D !important;
+        }
+
+        .option-card.incorrect .option-label-prefix {
+            color: var(--error-color);
+        }
+
+        .option-card.incorrect .option-tag {
+            background-color: var(--error-color);
+            color: #FFFFFF;
+        }
+
+        /* Feedback Section */
+        .feedback-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 28px;
+            font-size: var(--font-base);
+        }
+
+        .feedback-box.correct {
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-color);
+            font-weight: 700;
+        }
+
+        .feedback-box.incorrect {
+            background-color: #F8FAFC;
+            border: 1px solid var(--border-color);
+            color: var(--text-dark);
+        }
+
+        .feedback-title-incorrect {
+            color: var(--error-color);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .explanation-text {
+            color: var(--text-dark);
+            font-weight: 400;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        /* Result Screen */
+        .result-box {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .result-user {
+            font-size: 1.1em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .result-score {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 36px;
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 640px) {
+            :root {
+                --font-base: 19px;
+            }
+            .quiz-container {
+                padding: 24px 18px;
+            }
+            .option-card {
+                padding: 14px 16px;
+            }
+            .option-tag {
+                align-self: flex-start;
+                margin-top: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <!-- Main Title -->
+        <h1 class="app-title">Từ vựng miêu tả sự biến động của số liệu qua thời gian</h1>
+
+        <!-- 1. START SCREEN -->
+        <div id="start-screen">
+            <div class="form-group">
+                <label for="student-name">Họ và tên:</label>
+                <input type="text" id="student-name" placeholder="Nhập đầy đủ họ và tên của bạn..." autocomplete="off">
+            </div>
+            <button id="start-btn" class="btn-primary" disabled>Bắt đầu</button>
+        </div>
+
+        <!-- 2. QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden">
+            <div class="progress-header">
+                <span id="progress-text">Câu 1 / 50</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+
+            <div id="question-text" class="question-text"></div>
+            <div id="options-list" class="options-list"></div>
+
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button id="next-btn" class="btn-primary hidden">Câu tiếp theo</button>
+        </div>
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="result-screen" class="hidden">
+            <div class="result-box">
+                <div id="result-user" class="result-user">Học sinh: </div>
+                <div id="result-score" class="result-score">Số câu đúng: 0 / 50</div>
+                <button id="restart-btn" class="btn-primary">Làm lại</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Master Question Data Array
+        const rawQuestionsData = [
+            {
+                question: "1. Nhóm từ nào sau đây gồm toàn bộ các ĐỘNG TỪ miêu tả xu hướng TĂNG (Upward movement)?",
+                options: [
+                    "Decline, slump, dip, fall",
+                    "Surge, soar, rocket, climb",
+                    "Plunge, dive, plummet, drop",
+                    "Level off, stabilise, plateau, fluctuate"
+                ],
+                correct: 1,
+                explanation: "Upward: rise, increase, go up, climb, grow, double, treble/triple, boom, surge, soar, rocket."
+            },
+            {
+                question: "2. Động từ nào sau đây miêu tả xu hướng GIẢM MẠNH và đột ngột nhất trong tài liệu?",
+                options: [
+                    "Dip",
+                    "Decrease",
+                    "Plummet",
+                    "Deteriorate"
+                ],
+                correct: 2,
+                explanation: "Động từ 'plummet' (và 'plunge') mang sắc thái rơi thẳng đứng, sụt giảm cực mạnh và nhanh hơn nhiều so với dip hay decrease thông thường."
+            },
+            {
+                question: "3. Cặp từ nào sau đây mang ý nghĩa chỉ sự THAY ĐỔI LIÊN TỤC KHÔNG NGỪNG (Constant change)?",
+                options: [
+                    "Fluctuated (v) / A fluctuation (n)",
+                    "Plateaued (v) / A plateau (n)",
+                    "Levelled off (v) / A levelling off (n)",
+                    "Stabilised (v) / No change (n)"
+                ],
+                correct: 0,
+                explanation: "Mục Constant change chỉ rõ: động từ 'fluctuated [around]' và danh từ 'a fluctuation' dùng để chỉ sự biến động liên tục không ngừng."
+            },
+            {
+                question: "4. Động từ 'dip' trong mô tả biểu đồ có ý nghĩa chính xác là gì?",
+                options: [
+                    "Tăng vọt lên mức đỉnh cao nhất.",
+                    "Duy trì ổn định không đổi trong thời gian dài.",
+                    "Dao động liên tục quanh một mốc số liệu.",
+                    "Giảm nhẹ hoặc giảm tạm thời rồi phục hồi trở lại."
+                ],
+                correct: 3,
+                explanation: "'dip (dipped)' là sự sụt giảm nhẹ hoặc giảm ngắn hạn rồi có xu hướng hồi phục."
+            },
+            {
+                question: "5. Nhóm từ nào sau đây biểu đạt trạng thái KHÔNG THAY ĐỔI (Horizontal / No change)?",
+                options: [
+                    "Remain stable at, stay static at, maintain the same level",
+                    "Surge, soar, boom, double",
+                    "Plunge, dive, slump, deteriorate",
+                    "Rocket, climb, grow, treble"
+                ],
+                correct: 0,
+                explanation: "do not change, remain/stay + stable/steady/static/unchanged [at], maintain the same level và danh từ no change."
+            },
+            {
+                question: "6. Cụm danh từ nào sau đây được dùng để chỉ việc SỐ LIỆU TĂNG GẤP 3 LẦN?",
+                options: [
+                    "A doubling in + Noun",
+                    "A trebling in + Noun",
+                    "An upward trend",
+                    "A booming in + Noun"
+                ],
+                correct: 1,
+                explanation: "Danh từ tương ứng cho tăng gấp 3 là 'a trebling in + n.', tăng gấp 2 là 'a doubling in + n.'."
+            },
+            {
+                question: "7. Các tính từ 'huge, enormous, tremendous, dramatic' thuộc nhóm mức độ thay đổi nào?",
+                options: [
+                    "Small change (Thay đổi nhỏ)",
+                    "Average change (Thay đổi trung bình)",
+                    "Very extensive change (Thay đổi cực kỳ lớn/rất đáng kể)",
+                    "Slow change (Thay đổi chậm chạp)"
+                ],
+                correct: 2,
+                explanation: "'dramatic, huge, enormous, tremendous' thuộc vào nhóm 'Very extensive change' (thay đổi cực kỳ lớn)."
+            },
+            {
+                question: "8. Cặp tính từ và trạng từ nào sau đây thuộc nhóm TỐC ĐỘ THAY ĐỔI NHANH (Quick change)?",
+                options: [
+                    "Gradual / gradually",
+                    "Steady / steadily",
+                    "Slow / slowly",
+                    "Swift / swiftly"
+                ],
+                correct: 3,
+                explanation: "'swift / swiftly', 'sharp / sharply', 'rapid / rapidly', 'quick / quickly', 'steep / steeply' thuộc nhóm 'Quick change'."
+            },
+            {
+                question: "9. Từ nào sau đây KHÔNG thuộc nhóm tính từ miêu tả sự THAY ĐỔI BẤT NGỜ (Unexpected change)?",
+                options: [
+                    "Sudden",
+                    "Moderate",
+                    "Unexpected",
+                    "Abrupt"
+                ],
+                correct: 1,
+                explanation: "'Moderate' thuộc nhóm Average change (mức độ trung bình), trong khi 'sudden, unexpected, abrupt' thuộc nhóm Unexpected change."
+            },
+            {
+                question: "10. Khi một chỉ số đạt đến mốc cao nhất trên biểu đồ, cụm từ danh từ chuẩn xác theo tài liệu là:",
+                options: [
+                    "Reached a low of",
+                    "Reached a high/peak of",
+                    "A plateau at",
+                    "A levelling off at"
+                ],
+                correct: 1,
+                explanation: "Cụm danh từ chỉ đỉnh cao nhất là 'reached a high/peak of', còn đáy thấp nhất là 'reached a low of'."
+            },
+            {
+                question: "11. Động từ 'slump' được xếp vào nhóm xu hướng nào trong biểu đồ động?",
+                options: [
+                    "Xu hướng giảm (Downward movement)",
+                    "Xu hướng tăng (Upward movement)",
+                    "Trạng thái đi ngang ổn định (Horizontal movement)",
+                    "Xu hướng dao động liên tục (Fluctuating movement)"
+                ],
+                correct: 0,
+                explanation: "'Slump' được xếp vào mục Downward (↘) chỉ sự sụt giảm sâu (cả động từ slump và danh từ a slump)."
+            },
+            {
+                question: "12. Các từ 'substantial, considerable, significant, remarkable' được xếp chung vào nhóm nào?",
+                options: [
+                    "Small change (Thay đổi nhỏ)",
+                    "Quick change (Thay đổi nhanh)",
+                    "Extensive change (Thay đổi lớn/đáng kể)",
+                    "Unexpected change (Thay đổi đột ngột)"
+                ],
+                correct: 2,
+                explanation: "Bốn tính từ 'substantial, considerable, significant, remarkable' thuộc nhóm 'Extensive change' (thay đổi lớn/đáng kể)."
+            },
+            {
+                question: "13. Từ nào sau đây mang nghĩa là 'chạm đáy thấp nhất' của chu kỳ?",
+                options: [
+                    "Peaked at",
+                    "Stood at",
+                    "Reached a low of",
+                    "Plateaued at"
+                ],
+                correct: 2,
+                explanation: "'Reached a low of' là cụm từ chính xác miêu tả việc chạm mức thấp nhất trong giai đoạn khảo sát."
+            },
+            {
+                question: "14. Các trạng từ 'markedly, noticeably, moderately' dùng để diễn tả mức độ thay đổi nào?",
+                options: [
+                    "Very extensive change (Thay đổi cực lớn)",
+                    "Average change (Thay đổi mức độ trung bình/vừa phải)",
+                    "Small change (Thay đổi rất nhỏ)",
+                    "Unexpected change (Thay đổi bất ngờ)"
+                ],
+                correct: 1,
+                explanation: "Các trạng từ 'markedly, noticeably, moderately' cùng tính từ 'noticeable, marked, moderate' thuộc nhóm 'Average change'."
+            },
+            {
+                question: "15. Nhóm từ 'slight, small, minimal' và các trạng từ tương ứng diễn tả mức độ biến động như thế nào?",
+                options: [
+                    "Biến động rất lớn và đột ngột",
+                    "Biến động trung bình có thể nhận thấy",
+                    "Biến động nhỏ, không đáng kể (Small change)",
+                    "Biến động liên tục không ngừng"
+                ],
+                correct: 2,
+                explanation: "'Slight, small, minimal' và trạng từ 'slightly, minimally' thuộc nhóm 'Small change' (biến động rất nhỏ)."
+            },
+            {
+                question: "16. Dạng phân từ 2 (V-ed/V3) bất quy tắc của động từ 'rise' và 'fall' là gì?",
+                options: [
+                    "Rised / Falled",
+                    "Rose / Fell",
+                    "Risen / Fallen",
+                    "Rising / Falling"
+                ],
+                correct: 2,
+                explanation: "Động từ 'rise' biến đổi bất quy tắc: rise - rose - risen. Động từ 'fall' biến đổi: fall - fell - fallen."
+            },
+            {
+                question: "17. Từ 'increase' có thể đảm nhận những từ loại nào trong câu miêu tả biểu đồ?",
+                options: [
+                    "Chỉ làm Động từ.",
+                    "Chỉ làm Danh từ.",
+                    "Chỉ làm Tính từ.",
+                    "Vừa làm Động từ, vừa làm Danh từ."
+                ],
+                correct: 3,
+                explanation: "'Increase' vừa là động từ (to increase to/by), vừa là danh từ đếm được (an increase of)."
+            },
+            {
+                question: "18. Trong câu: 'There was a ______ increase in the consumption of tea.', từ thích hợp điền vào là từ loại gì?",
+                options: [
+                    "Tính từ (Adjective) bổ nghĩa cho danh từ 'increase'",
+                    "Trạng từ (Adverb) bổ nghĩa cho 'there was'",
+                    "Động từ nguyên mẫu (Infinitive verb)",
+                    "Danh từ số nhiều (Plural noun)"
+                ],
+                correct: 0,
+                explanation: "Sau mạo từ 'a' và trước danh từ 'increase' bắt buộc phải dùng Tính từ (Adjective) để bổ nghĩa (ví dụ: a sharp increase)."
+            },
+            {
+                question: "19. Trong câu: 'The figure for car sales climbed ______ between 2005 and 2010.', từ điền vào chỗ trống phải là:",
+                options: [
+                    "Một tính từ chỉ mức độ (như dramatic, steep)",
+                    "Một trạng từ chỉ tốc độ/mức độ (như steeply, dramatically) bổ nghĩa cho động từ 'climbed'",
+                    "Một danh từ trừu tượng",
+                    "Một giới từ chỉ phương hướng"
+                ],
+                correct: 1,
+                explanation: "Sau động từ hành động 'climbed' cần một Trạng từ (Adverb) để bổ nghĩa cho tốc độ hoặc mức độ tăng (ví dụ: climbed steeply)."
+            },
+            {
+                question: "20. Dạng quá khứ đơn (V2) của động từ 'grow' là gì?",
+                options: [
+                    "Growed",
+                    "Grew",
+                    "Grown",
+                    "Growing"
+                ],
+                correct: 1,
+                explanation: "Động từ 'grow' biến đổi ở thì quá khứ đơn (V2) là 'grew', quá khứ phân từ (V3) là 'grown'."
+            },
+            {
+                question: "21. Từ nào sau đây KHÔNG có dạng danh từ cùng gốc trùng chữ (không đổi cách viết) với động từ?",
+                options: [
+                    "Decline (v) -> Decline (n)",
+                    "Drop (v) -> Drop (n)",
+                    "Grow (v) -> Growth (n)",
+                    "Fall (v) -> Fall (n)"
+                ],
+                correct: 2,
+                explanation: "Decline, Drop, Fall đều có danh từ cùng hình thức (a decline, a drop, a fall). Riêng 'grow' có danh từ là 'growth'."
+            },
+            {
+                question: "22. Trạng từ tương ứng của tính từ 'dramatic' được hình thành bằng cách nào?",
+                options: [
+                    "Thêm đuôi -ly: dramaticly",
+                    "Thêm đuôi -ally: dramatically",
+                    "Biến đổi thành: dramatical",
+                    "Không đổi hình thức: dramatic"
+                ],
+                correct: 1,
+                explanation: "Tính từ có đuôi -ic khi chuyển sang trạng từ sẽ thêm -ally: dramatic -> dramatically (tương tự: automatic -> automatically)."
+            },
+            {
+                question: "23. Cụm từ nào sau đây kết hợp ĐÚNG với tính từ đứng sau động từ liên kết (linking verbs) 'remain/stay'?",
+                options: [
+                    "Remain stably",
+                    "Remain steadily",
+                    "Remain unchanged / stable",
+                    "Remain unchangingly"
+                ],
+                correct: 2,
+                explanation: "Sau các linking verbs như 'remain', 'stay' ta dùng Tính từ: remain stable / steady / static / unchanged (không dùng trạng từ)."
+            },
+            {
+                question: "24. Cặp từ nào sau đây gồm Tính từ và Trạng từ có quy tắc biến đổi BẤT QUY TẮC / NGOẠI LỆ về chính tả?",
+                options: [
+                    "Substantial -> Substantially",
+                    "Remarkable -> Remarkably",
+                    "Gradual -> Gradually",
+                    "Moderate -> Moderately"
+                ],
+                correct: 1,
+                explanation: "Tính từ tận cùng bằng -able như 'remarkable' khi đổi sang trạng từ sẽ bỏ 'e' và thêm 'y': remarkable -> remarkably (thay vì thêm -ly)."
+            },
+            {
+                question: "25. Khi chuyển đổi câu từ 'The price rose sharply' sang 'There was a...', cấu trúc ngữ pháp chuẩn xác là:",
+                options: [
+                    "There was a sharp rise in the price.",
+                    "There was a sharply rise of the price.",
+                    "There was sharp rose in the price.",
+                    "There was a sharply rising of the price."
+                ],
+                correct: 0,
+                explanation: "Cấu trúc tương đương: S + Verb + Adv <=> There was a/an + Adj + Noun + in + S. Do đó: 'There was a sharp rise in the price' là chính xác."
+            },
+            {
+                question: "26. Giới từ 'to' được dùng sau động từ tăng/giảm (rise/fall to) để chỉ MỐC SỐ LIỆU ĐẠT ĐẾN, còn giới từ 'by' chỉ LƯỢNG SỐ LIỆU CHÊNH LỆCH.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 0,
+                explanation: "Đúng. 'Rose to 50%' = tăng tới mốc 50%; 'rose by 10%' = tăng thêm một lượng là 10%."
+            },
+            {
+                question: "27. Khi sử dụng danh từ xu hướng (như 'a rise', 'a decrease'), giới từ chỉ mức độ chênh lệch luôn là giới từ 'at' (ví dụ: 'a rise at 10%').",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 1,
+                explanation: "Sai. Danh từ xu hướng đi với giới từ 'of' để chỉ lượng chênh lệch: 'an increase of 10%', không dùng 'at'."
+            },
+            {
+                question: "28. Động từ 'fluctuate' (dao động) thường đi kèm với giới từ 'around' (ví dụ: fluctuated around 50%).",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 0,
+                explanation: "Đúng theo tài liệu: 'fluctuated [around]' biểu thị việc dao động xung quanh một mốc số liệu nào đó."
+            },
+            {
+                question: "29. Các động từ chỉ vị trí xuất phát hoặc đứng yên như 'stood at', 'plateaued at', 'levelled off at' đều đi kèm với giới từ 'at'.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 0,
+                explanation: "Đúng theo tài liệu: stood at, plateaued at, levelled off at, stabilised at đều dùng giới từ 'at' để chỉ mốc số liệu cố định."
+            },
+            {
+                question: "30. Ta có thể dùng cấu trúc 'stay steadily' hoặc 'remain statically' vì sau remain và stay bắt buộc phải dùng trạng từ.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 1,
+                explanation: "Sai. 'Remain' và 'stay' là các liên động từ, theo sau bắt buộc là tính từ (remain steady, stay static), không dùng trạng từ."
+            },
+            {
+                question: "31. Cụm danh từ 'a doubling in' và 'a trebling in' được theo sau bởi một Danh từ (Noun) để chỉ sự tăng gấp đôi hoặc gấp ba ở lĩnh vực đó.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 0,
+                explanation: "'a doubling in + n.', 'a trebling in + n.' (ví dụ: a doubling in car sales)."
+            },
+            {
+                question: "32. Từ 'deteriorate' (xấu đi, suy thoái) được xếp vào nhóm động từ miêu tả xu hướng TĂNG TRƯỞNG (Upward movement).",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 1,
+                explanation: "Sai. 'Deteriorate' (trở nên tồi tệ hơn/suy thoái) được xếp ở nhóm Downward movement (xu hướng giảm)."
+            },
+            {
+                question: "33. Tính từ 'steep' và trạng từ 'steeply' dùng để miêu tả sự biến động RẤT CHẬM CHẠP theo thời gian.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 1,
+                explanation: "Sai. 'Steep / steeply' thuộc nhóm Quick change (thay đổi nhanh, dốc đứng), không phải thay đổi chậm."
+            },
+            {
+                question: "34. Cụm 'maintain the same level' đồng nghĩa với 'remain unchanged' và được dùng để miêu tả xu hướng đi ngang, không biến động.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 0,
+                explanation: "Đúng. Cả hai cụm đều thuộc nhóm Horizontal (→) miêu tả trạng thái ổn định, duy trì mức cũ."
+            },
+            {
+                question: "35. Các từ 'soar', 'rocket', 'surge' đều là các động từ mạnh diễn tả mức tăng trưởng cực nhanh và biên độ rất lớn.",
+                options: [
+                    "True (Đúng)",
+                    "False (Sai)"
+                ],
+                correct: 0,
+                explanation: "Đúng. 'Soar, rocket, surge' đều là các động từ biểu thị sự tăng trưởng bùng nổ, mạnh mẽ và nhanh chóng."
+            },
+            {
+                question: "36. The proportion of households with internet access ______ at 15% in the first year of the survey.",
+                options: [
+                    "surged",
+                    "stood",
+                    "plummeted",
+                    "fluctuated"
+                ],
+                correct: 1,
+                explanation: "Cụm chỉ điểm số liệu xuất phát tại năm đầu tiên: 'stood at 15%'."
+            },
+            {
+                question: "37. Oil prices experienced a ______ drop of nearly 40% within just two days due to the political crisis.",
+                options: [
+                    "gradual",
+                    "steady",
+                    "sudden",
+                    "slow"
+                ],
+                correct: 2,
+                explanation: "Cụm 'within just two days' (chỉ trong 2 ngày) biểu thị sự thay đổi đột ngột, bất ngờ nên dùng tính từ 'sudden drop'."
+            },
+            {
+                question: "38. After five years of continuous decline, car manufacturing in the UK ______ at 1.2 million units in 2015.",
+                options: [
+                    "plateaued",
+                    "dived",
+                    "roared",
+                    "deteriorated"
+                ],
+                correct: 0,
+                explanation: "Sau thời kỳ giảm và duy trì ổn định không đổi ở mốc 1.2 triệu: 'plateaued at 1.2 million'."
+            },
+            {
+                question: "39. The literacy rate ______ around 80% throughout the entire decade, moving between 78% and 82%.",
+                options: [
+                    "stabilised",
+                    "peaked",
+                    "doubled",
+                    "fluctuated"
+                ],
+                correct: 3,
+                explanation: "Số liệu di chuyển lên xuống trong khoảng 78% đến 82%: 'fluctuated around 80%'."
+            },
+            {
+                question: "40. Smartphone sales in Vietnam witnessed a ______ rise, growing by a steady 3% each year for a decade.",
+                options: [
+                    "gradual",
+                    "abrupt",
+                    "plummeting",
+                    "negligible"
+                ],
+                correct: 0,
+                explanation: "Tăng đều đặn 3% mỗi năm trong suốt 10 năm là sự tăng trưởng từ từ, chậm rãi: 'gradual rise'."
+            },
+            {
+                question: "41. Between 2000 and 2010, the volume of clean water consumption ______ from 200 to 600 liters per capita.",
+                options: [
+                    "trebled",
+                    "dropped",
+                    "levelled off",
+                    "slumped"
+                ],
+                correct: 0,
+                explanation: "Số liệu tăng từ 200 lên 600 lít là tăng gấp 3 lần, động từ chính xác là 'trebled'."
+            },
+            {
+                question: "42. The percentage of unemployed citizens fell ______ 12% in 2010 to 7% in 2018 (a drop of 5%).",
+                options: [
+                    "at",
+                    "by",
+                    "from",
+                    "in"
+                ],
+                correct: 2,
+                explanation: "Cấu trúc từ mốc nào đến mốc nào: 'fell from 12% in 2010 to 7% in 2018'."
+            },
+            {
+                question: "43. Sales of electric vehicles saw a ______ expansion, jumping from 5,000 to over 50,000 vehicles in only three years.",
+                options: [
+                    "minimal",
+                    "tremendous",
+                    "slight",
+                    "slow"
+                ],
+                correct: 1,
+                explanation: "Tăng từ 5,000 lên hơn 50,000 chiếc trong 3 năm là mức tăng cực kỳ lớn: 'tremendous expansion'."
+            },
+            {
+                question: "44. The unemployment rate in urban areas ______ unchanged at approximately 4.5% during the second half of the year.",
+                options: [
+                    "remained",
+                    "rose",
+                    "dipped",
+                    "dove"
+                ],
+                correct: 0,
+                explanation: "Cụm từ chỉ trạng thái đi ngang không đổi: 'remained unchanged at approximately 4.5%'."
+            },
+            {
+                question: "45. In 2008, the company's annual revenue reached a ______ of $100 million before plunging sharply.",
+                options: [
+                    "low",
+                    "bottom",
+                    "peak",
+                    "fluctuation"
+                ],
+                correct: 2,
+                explanation: "Đạt mốc cao nhất trước khi giảm: 'reached a peak of $100 million'."
+            },
+            {
+                question: "46. Sắp xếp các cụm từ sau thành câu miêu tả xu hướng hoàn chỉnh:\n(1) before plunging to a low of 5% in 2015\n(2) The percentage of solar energy usage\n(3) peaked at 35% in 2010\n(4) stood at 10% in 2000 and",
+                options: [
+                    "(2) -> (4) -> (3) -> (1)",
+                    "(4) -> (2) -> (1) -> (3)",
+                    "(2) -> (1) -> (4) -> (3)",
+                    "(3) -> (2) -> (4) -> (1)"
+                ],
+                correct: 0,
+                explanation: "Trật tự câu logic: (2) Chủ ngữ -> (4) Mốc xuất phát năm 2000 -> (3) Đạt đỉnh năm 2010 -> (1) Rơi xuống đáy năm 2015."
+            },
+            {
+                question: "47. Câu nào sau đây CHUYỂN ĐỔI ĐÚNG NGHĨA từ câu gốc: 'Coffee exports grew substantially from $2 million to $5 million.'?",
+                options: [
+                    "There was a substantial growth of coffee exports from $2 million to $5 million.",
+                    "There was a substantial growth in coffee exports from $2 million to $5 million.",
+                    "There were a substantially growth in coffee exports from $2 million to $5 million.",
+                    "There was a substantially grow in coffee exports from $2 million to $5 million."
+                ],
+                correct: 1,
+                explanation: "Chuyển từ động từ sang danh từ: 'There was a substantial growth in coffee exports...' (giới từ đi kèm danh từ chỉ đối tượng là 'in')."
+            },
+            {
+                question: "48. Sắp xếp các thành phần sau để tạo thành câu so sánh và mô tả trạng thái ổn định:\n(1) remained steady at 40%\n(2) the proportion of bus users\n(3) for the remainder of the period\n(4) While car users increased rapidly,",
+                options: [
+                    "(4) -> (1) -> (2) -> (3)",
+                    "(4) -> (2) -> (1) -> (3)",
+                    "(2) -> (1) -> (3) -> (4)",
+                    "(1) -> (2) -> (4) -> (3)"
+                ],
+                correct: 1,
+                explanation: "Trật tự câu tương phản chuẩn: (4) Mệnh đề While -> (2) Chủ ngữ vế chính -> (1) Động từ vị ngữ -> (3) Trạng ngữ thời gian còn lại."
+            },
+            {
+                question: "49. Câu nào sau đây sử dụng GIỚI TỪ ĐÚNG CHUẨN để diễn tả 'Doanh thu tăng thêm 15 tỷ đồng, đạt mốc 80 tỷ đồng'?",
+                options: [
+                    "Revenue increased to 15 billion VND, reaching by 80 billion VND.",
+                    "Revenue increased at 15 billion VND, reaching at 80 billion VND.",
+                    "Revenue increased by 15 billion VND to 80 billion VND.",
+                    "Revenue increased of 15 billion VND with 80 billion VND."
+                ],
+                correct: 2,
+                explanation: "Quy tắc giới từ: 'increased by [lượng chênh lệch 15 tỷ] to [mốc số liệu đạt tới 80 tỷ]'."
+            },
+            {
+                question: "50. Sắp xếp các cụm từ sau để tạo thành câu hoàn chỉnh miêu tả sự dao động:\n(1) between 15°C and 25°C throughout the summer\n(2) The average daily temperature\n(3) before stabilising at 20°C in September\n(4) fluctuated markedly",
+                options: [
+                    "(2) -> (1) -> (4) -> (3)",
+                    "(4) -> (2) -> (1) -> (3)",
+                    "(2) -> (4) -> (1) -> (3)",
+                    "(3) -> (2) -> (4) -> (1)"
+                ],
+                correct: 2,
+                explanation: "Trật tự câu diễn đạt dao động: (2) Chủ ngữ -> (4) Động từ dao động -> (1) Khoảng biên độ dao động -> (3) Trạng ngữ trước khi ổn định."
+            }
+        ];
+
+        // State Variables
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let studentName = "";
+        let isAnswered = false;
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        const studentNameInput = document.getElementById('student-name');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const progressText = document.getElementById('progress-text');
+        const progressBarFill = document.getElementById('progress-bar-fill');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsListEl = document.getElementById('options-list');
+        const feedbackBoxEl = document.getElementById('feedback-box');
+
+        const resultUserEl = document.getElementById('result-user');
+        const resultScoreEl = document.getElementById('result-score');
+
+        // Letters for labeling options
+        const optionLabels = ['A', 'B', 'C', 'D'];
+
+        // Fisher-Yates Shuffle Algorithm
+        function shuffleQuestions(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Enable Start button only if name is entered
+        studentNameInput.addEventListener('input', (e) => {
+            studentName = e.target.value.trim();
+            startBtn.disabled = studentName === "";
+        });
+
+        // Start Quiz Handler
+        startBtn.addEventListener('click', () => {
+            if (!studentName) return;
+            startQuiz();
+        });
+
+        // Restart Quiz Handler
+        restartBtn.addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+            studentNameInput.value = studentName;
+            startBtn.disabled = false;
+        });
+
+        function startQuiz() {
+            // Shuffle questions on start/restart
+            questions = shuffleQuestions(rawQuestionsData);
+            currentIndex = 0;
+            score = 0;
+            isAnswered = false;
+
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            isAnswered = false;
+            nextBtn.classList.add('hidden');
+            feedbackBoxEl.classList.add('hidden');
+            feedbackBoxEl.className = 'feedback-box hidden';
+            feedbackBoxEl.innerHTML = '';
+
+            const q = questions[currentIndex];
+
+            // Progress Update
+            const currentNum = currentIndex + 1;
+            const totalNum = questions.length;
+            progressText.innerText = `Câu ${currentNum} / ${totalNum}`;
+            const percentage = (currentNum / totalNum) * 100;
+            progressBarFill.style.width = `${percentage}%`;
+
+            // Question Text Update
+            questionTextEl.innerText = q.question;
+
+            // Clear and Render Options
+            optionsListEl.innerHTML = '';
+            q.options.forEach((optText, idx) => {
+                const card = document.createElement('button');
+                card.className = 'option-card';
+                card.type = 'button';
+
+                const content = document.createElement('div');
+                content.className = 'option-content';
+
+                const prefix = document.createElement('span');
+                prefix.className = 'option-label-prefix';
+                prefix.innerText = `${optionLabels[idx]}.`;
+
+                const textVal = document.createElement('span');
+                textVal.className = 'option-text-val';
+                textVal.innerText = optText;
+
+                content.appendChild(prefix);
+                content.appendChild(textVal);
+                card.appendChild(content);
+
+                card.addEventListener('click', () => selectAnswer(idx));
+                optionsListEl.appendChild(card);
+            });
+
+            // Update Next button label for final question
+            if (currentIndex === questions.length - 1) {
+                nextBtn.innerText = "Xem kết quả";
+            } else {
+                nextBtn.innerText = "Câu tiếp theo";
+            }
+        }
+
+        function selectAnswer(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = questions[currentIndex];
+            const isCorrect = selectedIndex === q.correct;
+
+            if (isCorrect) {
+                score++;
+            }
+
+            const optionCards = optionsListEl.children;
+
+            // Lock all options & apply states
+            for (let i = 0; i < optionCards.length; i++) {
+                const card = optionCards[i];
+                card.classList.add('disabled');
+
+                if (i === q.correct) {
+                    card.classList.add('correct');
+                    const tag = document.createElement('span');
+                    tag.className = 'option-tag';
+                    tag.innerText = 'Đáp án đúng';
+                    card.appendChild(tag);
+                }
+
+                if (i === selectedIndex && !isCorrect) {
+                    card.classList.add('incorrect');
+                    const tag = document.createElement('span');
+                    tag.className = 'option-tag';
+                    tag.innerText = 'Bạn đã chọn';
+                    card.appendChild(tag);
+                }
+            }
+
+            // Display Feedback
+            feedbackBoxEl.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackBoxEl.classList.add('correct');
+                feedbackBoxEl.innerText = "Chính xác! Chúc mừng bạn!";
+            } else {
+                feedbackBoxEl.classList.add('incorrect');
+                
+                const errTitle = document.createElement('div');
+                errTitle.className = 'feedback-title-incorrect';
+                errTitle.innerText = "Rất tiếc, chưa chính xác.";
+
+                const expText = document.createElement('div');
+                expText.className = 'explanation-text';
+                expText.innerText = q.explanation;
+
+                feedbackBoxEl.appendChild(errTitle);
+                feedbackBoxEl.appendChild(expText);
+            }
+
+            // Reveal Next/Result Button
+            nextBtn.classList.remove('hidden');
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        });
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            resultUserEl.innerText = `Học sinh: ${studentName}`;
+            resultScoreEl.innerText = `Số câu đúng: ${score} / ${questions.length}`;
+        }
+    </script>
+</body>
+</html>
