@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IELTS Writing Task 2 & CPS Quiz</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh;display:flex;justify-content:center;padding:24px 12px}
+  .card{background:#fff;width:100%;max-width:720px;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.08);padding:28px}
+  h1{font-size:22px;margin:0 0 6px;color:#1d4ed8}
+  p.sub{margin:0 0 20px;color:#64748b}
+  label{display:block;font-weight:600;margin:14px 0 6px}
+  input[type=text]{width:100%;padding:12px;border:2px solid #cbd5e1;border-radius:10px;font-size:16px}
+  input[type=text]:focus{outline:none;border-color:#2563eb}
+  button{cursor:pointer;border:none;border-radius:10px;padding:12px 22px;font-size:16px;font-weight:600;background:#2563eb;color:#fff;margin-top:20px}
+  button:hover{background:#1d4ed8}
+  .err{color:#dc2626;margin-top:10px;display:none}
+  .hidden{display:none}
+  .top{display:flex;justify-content:space-between;font-size:14px;color:#64748b;margin-bottom:8px}
+  .bar{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:20px}
+  .bar div{height:100%;background:#2563eb;width:0;transition:width .3s}
+  .q{font-size:18px;font-weight:600;line-height:1.5;margin-bottom:16px;white-space:pre-line}
+  .opt{display:block;width:100%;text-align:left;background:#fff;color:#1e293b;border:2px solid #cbd5e1;border-radius:10px;padding:12px 14px;margin:8px 0;font-weight:400;font-size:16px;line-height:1.45}
+  .opt:hover:not(:disabled){background:#eff6ff;border-color:#2563eb}
+  .opt:disabled{cursor:default}
+  .opt.correct{background:#22c55e;border-color:#16a34a;color:#fff;font-weight:600}
+  .opt.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}
+  .fb{margin-top:14px;padding:14px;border-radius:10px;display:none;line-height:1.5}
+  .fb.good{display:block;background:#dcfce7;color:#166534;font-weight:700;font-size:18px}
+  .fb.bad{display:block;background:#fef3c7;color:#78350f}
+  .result{text-align:center}
+  .score{font-size:48px;font-weight:800;margin:10px 0}
+  .msg{font-size:28px;font-weight:800;margin:10px 0}
+  .msg.win{color:#16a34a}
+  .msg.retry{color:#7c3aed}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- Trang 1: nhập họ tên -->
+  <div id="pgName">
+    <h1>IELTS Writing Task 2 & CPS</h1>
+    <p class="sub">Bộ câu hỏi trắc nghiệm đánh giá kiến thức (30 câu)</p>
+    <label for="fn">Họ</label>
+    <input type="text" id="fn" placeholder="Ví dụ: Nguyễn" autocomplete="off">
+    <label for="ln">Tên</label>
+    <input type="text" id="ln" placeholder="Ví dụ: An" autocomplete="off">
+    <div class="err" id="err">Vui lòng nhập đầy đủ họ và tên.</div>
+    <button id="startBtn">Bắt đầu làm bài</button>
+  </div>
+
+  <!-- Trang 2: làm bài -->
+  <div id="pgQuiz" class="hidden">
+    <div class="top"><span id="who"></span><span id="prog"></span></div>
+    <div class="bar"><div id="barFill"></div></div>
+    <div class="q" id="qText"></div>
+    <div id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <button id="nextBtn" class="hidden">Câu tiếp theo</button>
+  </div>
+
+  <!-- Trang 3: kết quả -->
+  <div id="pgResult" class="hidden result">
+    <h1 id="rName"></h1>
+    <div class="score" id="rScore"></div>
+    <div class="msg" id="rMsg"></div>
+    <button id="againBtn">Làm lại</button>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+ {q:"Trong bài thi IELTS Writing Học thuật, phần thi Task 2 chiếm tỷ trọng bao nhiêu trong tổng số điểm phần thi Writing?",o:["1/3 tổng số điểm","1/2 tổng số điểm","2/3 tổng số điểm","3/4 tổng số điểm"],a:2,e:"Tài liệu ghi rõ: Task 2 chiếm ⅔ tổng số điểm của phần thi Writing."},
+ {q:"Thời gian làm bài hợp lý được khuyến nghị và độ dài tối thiểu của bài luận Task 2 lần lượt là bao nhiêu?",o:["30 phút và 200 từ","40 phút và 250 từ","45 phút và 250 từ","60 phút và 300 từ"],a:1,e:"Tài liệu quy định: độ dài tối thiểu là 250 từ, và nên được hoàn thành trong 40 phút."},
+ {q:"Theo mô tả tiêu chí Task Response ở Band 7.0, bài viết cần đạt được yêu cầu quan trọng nào sau đây?",o:["Giải quyết phù hợp các phần của đề bài, thể hiện quan điểm rõ ràng, phát triển và củng cố các ý chính bằng lập luận phù hợp.","Chỉ cần nêu ý tưởng chính mà không cần giải thích hay đưa dẫn chứng.","Sử dụng thành ngữ và từ vựng hiếm trong mọi câu để gây ấn tượng.","Viết nhiều hơn 5 đoạn văn để mở rộng dung lượng bài viết."],a:0,e:"Tiêu chí TR Band 7.0 yêu cầu trả lời phù hợp các phần đề bài, có quan điểm rõ ràng và ý chính được mở rộng bằng lập luận phù hợp."},
+ {q:"Tiêu chí Coherence and Cohesion (CC) ở Band 7.0 đánh giá đặc điểm nào của bài luận?",o:["Số lượng từ ngữ ít phổ biến được sử dụng.","Thông tin và ý tưởng được sắp xếp logic, mạch lạc xuyên suốt, sử dụng linh hoạt các phương tiện liên kết và chia đoạn hiệu quả.","Mức độ hoàn hảo tuyệt đối không mắc lỗi ngữ pháp nào.","Khả năng phát âm chính xác các từ vựng học thuật."],a:1,e:"Tiêu chí CC Band 7.0 đòi hỏi ý tưởng xếp logic, mạch lạc, dùng linh hoạt cohesive devices và chia đoạn hiệu quả."},
+ {q:"Yêu cầu về tỷ lệ cấu trúc câu phức trong tiêu chí Grammatical Range and Accuracy (GRA) ở mức Band 7.0 là bao nhiêu?",o:["20 - 30%","40 - 50%","60 - 70%","90 - 100%"],a:2,e:"Tiêu chí GRA Band 7.0 yêu cầu sử dụng đa dạng các cấu trúc câu đơn, ghép, phức (số lượng câu phức nhiều: 60-70% bài viết)."},
+ {q:"Tiêu chí Lexical Resource (LR) ở Band 7.0 đòi hỏi thí sinh thể hiện năng lực từ vựng như thế nào?",o:["Vốn từ đủ phong phú để diễn đạt linh hoạt, biết dùng từ ít phổ biến, kết hợp từ (collocation) và giữ văn phong học thuật.","Dùng hoàn toàn từ vựng thân mật và tiếng lóng trong đời sống hàng ngày.","Lặp lại chính xác các từ có trong câu hỏi đề bài.","Tránh hoàn toàn việc paraphrase đề bài."],a:0,e:"Tiêu chí LR Band 7.0 yêu cầu vốn từ phong phú, linh hoạt, dùng từ ít phổ biến, kết hợp từ (collocation) và giữ văn phong học thuật."},
+ {q:"Một bài luận IELTS Writing Task 2 chuẩn theo hướng dẫn tài liệu bao gồm cấu trúc mấy phần và mấy đoạn?",o:["2 phần, 3 đoạn","3 phần, 4 đoạn (1 Mở bài, 2 Thân bài, 1 Kết bài)","3 phần, 5 đoạn (1 Mở bài, 3 Thân bài, 1 Kết bài)","4 phần, 6 đoạn"],a:1,e:"Cấu trúc bài luận chuẩn: 3 phần 4 đoạn gồm 1 đoạn Mở bài, 2 đoạn Thân bài và 1 đoạn Kết bài."},
+ {q:"Đoạn Introduction (Mở bài) tiêu chuẩn gồm 2 câu với vai trò cụ thể là gì?",o:["Câu (1) Nêu ví dụ cụ thể và Câu (2) Đặt câu hỏi nghi vấn.","Câu (1) Tóm tắt thân bài và Câu (2) Đưa ra lời khuyên cho xã hội.","Câu (1) Paraphrase lại đề bài và Câu (2) Nêu mục đích bài viết (Thesis Statement).","Câu (1) Định nghĩa thuật ngữ và Câu (2) Liệt kê các số liệu."],a:2,e:"Đoạn Mở bài 2 câu gồm: (1) Paraphrase lại đề bài và (2) Thesis Statement nêu mục đích bài viết."},
+ {q:"Vai trò bắt buộc của câu Thesis Statement trong đoạn Mở bài là gì?",o:["Nêu mục đích bài viết và trả lời đúng, đủ câu hỏi của đề bài.","Nhắc lại nguyên văn từng từ của đề bài.","Liệt kê toàn bộ các ví dụ sẽ dùng ở thân bài.","Kết thúc bài luận bằng một lời kêu gọi hành động."],a:0,e:"Thesis Statement thể hiện MỤC ĐÍCH của bài viết: trả lời đúng và đủ câu hỏi của đề bài (PHẢI CÓ)."},
+ {q:"Vị trí và đặc điểm tiêu chuẩn của câu chủ đề (Topic Sentence) trong một đoạn thân bài là gì?",o:["Nằm ở giữa đoạn và nêu ví dụ minh họa chi tiết.","Luôn nằm ở ĐẦU ĐOẠN, gồm 1 câu giới thiệu chủ đề của đoạn, rõ ràng và KHÔNG đi vào chi tiết.","Nằm ở cuối đoạn và giải thích số liệu thống kê.","Nằm ở đoạn Kết bài để tóm tắt ý chính."],a:1,e:"Topic sentence luôn nằm ở đầu đoạn, gồm 1 câu, không đi vào chi tiết và cần rõ ràng."},
+ {q:"Các ký tự P-E-E trong mô hình phát triển ý tưởng cho đoạn thân bài đại diện cho những thành phần nào?",o:["Paraphrase - Explanation - Evaluation","Point (Supporting idea) - Explanation - Example","Problem - Effect - Evidence","Purpose - Example - Conclusion"],a:1,e:"Mô hình P-E-E gồm: P (Point - Supporting idea), E (Explanation - giải thích), E (Example - ví dụ)."},
+ {q:"Thành phần nào trong cấu trúc đoạn thân bài được coi là thành phần không bắt buộc (Optional)?",o:["Topic Sentence (Câu chủ đề)","Point (Supporting idea 1)","Example (Ví dụ minh họa) và Concluding sentence (Câu kết đoạn)","Explanation (Giải thích luận điểm)"],a:2,e:"Tài liệu xác định Example và Concluding sentence đều là Optional (có thể có hoặc không)."},
+ {q:"Dạng bài Cause - Problem - Solution (CPS) trong thực tế thường yêu cầu giải quyết theo các cặp khía cạnh nào?",o:["Agree hoặc Disagree","Advantages và Disadvantages","Các cặp như (Causes - Problems), (Problems - Solutions), hoặc (Causes - Solutions)","So sánh giữa quá khứ và hiện tại"],a:2,e:"Đề bài CPS thường hỏi theo cặp 2 khía cạnh: (Causes - Problems), (Problems - Solutions), hoặc (Causes - Solutions)."},
+ {q:"Quy tắc quan trọng về việc thể hiện quan điểm cá nhân trong dạng bài luận CPS là gì?",o:["Thường KHÔNG yêu cầu thể hiện ý kiến cá nhân trực tiếp, nên KHÔNG NÊN dùng các cụm từ xưng ngôi thứ nhất (I think, I believe, In my opinion).","Bắt buộc phải dùng cụm từ 'In my opinion' ở từng đoạn văn.","Thí sinh phải tự xưng tên cá nhân trong bài viết.","Chỉ thể hiện quan điểm cá nhân ở phần Thân bài 1."],a:0,e:"Bài viết CPS thường không yêu cầu thể hiện ý kiến cá nhân, nên không nên thể hiện trực tiếp qua các cụm từ (I think, I believe, In my opinion...)."},
+ {q:"Yêu cầu cốt lõi của đoạn Conclusion (Kết bài) đối với một bài luận Task 2 là gì?",o:["Nêu thêm 2 ý tưởng mới chưa xuất hiện ở thân bài.","Tóm tắt lại các ý tưởng chính (4 main ideas) đã viết trong 2 đoạn thân bài.","Giải thích lại các ví dụ đã đưa ra ở đoạn thân bài 1.","Đặt ra các câu hỏi mở cho người chấm tự suy ngẫm."],a:1,e:"Kết bài có nhiệm vụ tóm tắt các ý tưởng chính (4 main ideas) trong phần Body."},
+ {q:"Bài luận IELTS Writing Task 2 nếu viết dưới 250 từ vẫn được giữ nguyên điểm tiêu chí Task Response nếu lập luận hay.",o:["Đúng (True)","Sai (False)"],a:1,e:"Sai. Độ dài tối thiểu bắt buộc là 250 từ. Viết thiếu dung lượng quy định sẽ ảnh hưởng trực tiếp đến điểm số."},
+ {q:"Một đề bài dạng CPS bắt buộc người viết phải phân tích đủ cả 3 khía cạnh: Nguyên nhân (Causes), Hậu quả (Problems/Effects) và Giải pháp (Solutions) trong cùng một bài viết.",o:["Đúng (True)","Sai (False)"],a:1,e:"Sai. Đề bài không hỏi cả 3 khía cạnh trong 1 bài mà chỉ hỏi theo cặp 2 khía cạnh."},
+ {q:"Ở tiêu chí Coherence and Cohesion mức Band 7.0, bài viết có thể xuất hiện một vài lỗi nhỏ không đáng kể trong việc triển khai các phương tiện liên kết.",o:["Đúng (True)","Sai (False)"],a:0,e:"Đúng. Mô tả CC Band 7.0 nêu: có thể xuất hiện một vài lỗi nhỏ trong quá trình triển khai nhưng không đáng kể."},
+ {q:"Việc Paraphrase đề bài ở đoạn Mở bài đòi hỏi người viết chép lại nguyên văn đề bài để đảm bảo tính chính xác tuyệt đối.",o:["Đúng (True)","Sai (False)"],a:1,e:"Sai. Paraphrase đòi hỏi dùng từ ngữ và cấu trúc khác để diễn đạt lại nội dung đề bài, không được chép nguyên văn."},
+ {q:"Đạt tỷ lệ câu phức chiếm khoảng 60% đến 70% trong toàn bài viết là một chỉ số phù hợp với yêu cầu Band 7.0 tiêu chí Grammatical Range and Accuracy.",o:["Đúng (True)","Sai (False)"],a:0,e:"Đúng. Tài liệu ghi cụ thể: số lượng câu phức nhiều, 60-70% bài viết, đáp ứng tiêu chí GRA Band 7.0."},
+ {q:"Câu kết đoạn (Concluding sentence) ở cuối mỗi đoạn thân bài là thành phần bắt buộc phải có để đoạn văn được tính điểm.",o:["Đúng (True)","Sai (False)"],a:1,e:"Sai. Câu kết đoạn (Concluding sentence) được tài liệu đánh dấu là optional (có thể có hoặc không)."},
+ {q:"Nếu đề bài CPS không yêu cầu nêu ý kiến cá nhân thì ở đoạn Kết bài thí sinh KHÔNG NÊN viết thêm câu nhắc lại quan điểm cá nhân.",o:["Đúng (True)","Sai (False)"],a:0,e:"Đúng. Nếu đề bài không yêu cầu ý kiến cá nhân thì đoạn Kết bài không viết thêm câu nhắc lại ý kiến."},
+ {q:"Hoàn thành câu Thesis Statement trong đoạn Mở bài của dạng bài Problems & Solutions:\n\"This essay attempts to _______ on the problems which have resulted from this phenomenon before outlining several viable solutions that should be adopted to tackle them.\"",o:["shed light","take place","pay attention","make clear"],a:0,e:"Mẫu câu Intro Problems & Solutions: \"This essay attempts to shed light on the problems which have resulted from...\""},
+ {q:"Hoàn thành câu Topic Sentence chỉ tác động tiêu cực trong đoạn Thân bài 1 (Problems):\n\"The rapid growth of private vehicles could have several negative _______ on the urban environment and public health.\"",o:["repercussions","advantages","causes","explanations"],a:0,e:"Mẫu câu Thân bài 1 (Problems): \"(Tình trạng) could have several negative repercussions / massive ramifications.\""},
+ {q:"Hoàn thành câu mở đầu đoạn Thân bài 2 đề xuất giải pháp cho vấn đề:\n\"To _______ this worrying issue, the following feasible steps should be taken by the government and individuals.\"",o:["combat","ignore","create","extend"],a:0,e:"Mẫu câu Thân bài 2 (Solutions): \"To combat this worrying issue, the following feasible steps should be taken.\""},
+ {q:"Hoàn thành câu giới thiệu giải pháp hàng đầu trong đoạn Thân bài 2 (Solutions):\n\"The _______ solution is to impose higher taxes on industrial emissions to encourage eco-friendly technology.\"",o:["foremost","worst","accidental","traditional"],a:0,e:"Mẫu câu nêu giải pháp 1: \"The foremost solution is...\""},
+ {q:"Hoàn thành câu bổ sung giải pháp song song trong đoạn Thân bài 2:\n\"_______ with this, comprehensive educational programs should be implemented to improve public awareness.\"",o:["In tandem","In spite","In contrast","In place"],a:0,e:"Mẫu câu bổ sung giải pháp 2: \"In tandem with this, ...\""},
+ {q:"Hoàn thành câu Thesis Statement trong bài luận dạng Causes & Effects:\n\"This essay will explore the underlying causes of this trend before examining its _______ consequences on modern society.\"",o:["far-reaching","short-sighted","narrow-minded","superficial"],a:0,e:"Mẫu câu Intro Causes & Effects: \"This essay will explore the underlying causes of this problem before examining its far-reaching consequences.\""},
+ {q:"Hoàn thành câu chỉ trách nhiệm/nguyên nhân gây ra biến đổi khí hậu trong đoạn Mở bài:\n\"It has been increasingly proven that the activities of mankind are _______ for global warming and environmental degradation.\"",o:["accountable","beneficial","irrelevant","indifferent"],a:0,e:"Cụm từ mẫu trong ví dụ Paraphrase: \"human activities are accountable for global warming\"."},
+ {q:"Hoàn thành câu đề xuất các bước hành động có tính khả thi trong bài luận dạng Causes & Solutions:\n\"To address this trend, the following _______ steps should be adopted to deal with the problem effectively.\"",o:["feasible","impossible","destructive","dangerous"],a:0,e:"Mẫu câu Thân bài 2 (Solutions): \"...the following feasible steps should be taken...\" (feasible = khả thi)."}
+];
+
+const $ = id => document.getElementById(id);
+const LETTERS = ["A","B","C","D"];
+let studentName = "", list = [], idx = 0, score = 0, answered = false;
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function show(id){
+  ["pgName","pgQuiz","pgResult"].forEach(p => $(p).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+}
+
+function start(){
+  const fn = $("fn").value.trim(), ln = $("ln").value.trim();
+  if(!fn || !ln){ $("err").style.display = "block"; return; }
+  $("err").style.display = "none";
+  studentName = fn + " " + ln;
+  begin();
+}
+function begin(){
+  list = shuffle(QUESTIONS);
+  idx = 0; score = 0;
+  $("who").textContent = studentName;
+  show("pgQuiz");
+  render();
+}
+function render(){
+  answered = false;
+  const item = list[idx];
+  $("prog").textContent = "Câu " + (idx+1) + " / " + list.length;
+  $("barFill").style.width = (idx/list.length*100) + "%";
+  $("qText").textContent = item.q;
+  $("fb").className = "fb"; $("fb").innerHTML = "";
+  $("nextBtn").classList.add("hidden");
+  $("nextBtn").textContent = (idx === list.length-1) ? "Xem kết quả" : "Câu tiếp theo";
+  const box = $("opts"); box.innerHTML = "";
+  item.o.forEach((text,i) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = LETTERS[i] + ". " + text;
+    b.onclick = () => choose(i);
+    box.appendChild(b);
+  });
+}
+function choose(i){
+  if(answered) return;
+  answered = true;
+  const item = list[idx];
+  const btns = $("opts").querySelectorAll(".opt");
+  btns.forEach(b => b.disabled = true);
+  const fb = $("fb");
+  if(i === item.a){
+    score++;
+    btns[i].classList.add("correct");
+    fb.className = "fb good";
+    fb.textContent = "Good job";
+  } else {
+    btns[i].classList.add("wrong");
+    btns[item.a].classList.add("correct");
+    fb.className = "fb bad";
+    fb.innerHTML = "<b>Đáp án đúng: " + LETTERS[item.a] + ".</b><br>" + item.e;
+  }
+  $("nextBtn").classList.remove("hidden");
+}
+function next(){
+  if(idx < list.length-1){ idx++; render(); }
+  else finish();
+}
+function finish(){
+  show("pgResult");
+  $("rName").textContent = studentName;
+  $("rScore").textContent = "Điểm: " + score + " / " + list.length;
+  const m = $("rMsg");
+  if(score === list.length){
+    m.className = "msg win"; m.textContent = "you nailed it";
+  } else {
+    m.className = "msg retry"; m.textContent = "You should try again";
+  }
+}
+
+$("startBtn").onclick = start;
+$("nextBtn").onclick = next;
+$("againBtn").onclick = begin;
+["fn","ln"].forEach(id => $(id).addEventListener("keydown", e => { if(e.key === "Enter") start(); }));
+</script>
+</body>
+</html>
